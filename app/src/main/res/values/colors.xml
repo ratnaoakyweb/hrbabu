@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="colorPrimary">#78B345</color> <!-- Bright Blue (Login Button, Links) -->
+    <color name="colorPrimaryDark">#498000</color> <!-- Darker Blue -->
+    <color name="colorAccent">#FF9800</color> <!-- Optional highlight (not used yet) -->
+
+    <!-- Text Colors -->
+    <color name="textPrimary">#000000</color> <!-- Black -->
+    <color name="textSecondary">#888888</color> <!-- Gray for subtitle/description -->
+    <color name="linkColor">#1A73E8</color> <!-- Blue for clickable links -->
+
+    <!-- Backgrounds -->
+    <color name="background">#FFFFFF</color> <!-- White -->
+    <color name="divider">#DDDDDD</color> <!-- Light Gray for dividers -->
+
+    <!-- Google Button Outline -->
+    <color name="googleOutline">#E0E0E0</color>
+</resources>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivCalendar"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_calendar" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Punch In Toggle -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchPunchIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:foregroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"
+            app:thumbIconTint="@color/colorPrimary"
+            android:text="Punch-In" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+        <ImageView
+            android:id="@+id/ivSettings"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_settings"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
+
+    <!-- Work Timer Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardTimer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Date + Status -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sep 25, Thursday"
+                    android:textStyle="bold"
+                    android:textSize="14sp"/>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Working"
+                    android:textColor="#4CAF50"
+                    android:background="@drawable/bg_status_green"
+                    android:padding="6dp"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- Timer -->
+            <TextView
+                android:id="@+id/tvTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="07 : 18 : 07"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="#6A0DAD"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Working On -->
+            <TextView
+                android:id="@+id/tvWorkingOn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Working on Ratan Deep\nRedesign Home Page"
+                android:textSize="14sp"
+                android:layout_marginTop="12dp"/>
+
+            <!-- Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:id="@+id/btnBreak"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Go for Break"
+                    android:backgroundTint="#FFE0B2"
+                    android:textColor="#E65100"/>
+
+                <Button
+                    android:id="@+id/btnClockOut"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Clock Out"
+                    android:backgroundTint="#FF5252"
+                    android:textColor="#FFFFFF"/>
+            </LinearLayout>
+
+            <!-- Clock Info -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/tvClockIn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="10:03\nClock In"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvClockOut"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="--\nClock Out"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvBreak"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="00:10:03\nBreak"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Recent Tasks -->
+    <TextView
+        android:id="@+id/tvRecentTasks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recent Tasks"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/cardTimer"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerTasks"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvRecentTasks"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
