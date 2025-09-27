@@ -1,10 +1,13 @@
 package com.hrbabu.tracking
 
+import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hrbabu.tracking.databinding.ActivityHomeBinding
+import com.hrbabu.tracking.service.LocationService
 
 class HomeActivity : AppCompatActivity() {
 
@@ -29,11 +32,33 @@ class HomeActivity : AppCompatActivity() {
             if (isChecked) {
                 binding.tvStatus.text = "Working"
                 binding.tvStatus.setTextColor(Color.parseColor("#4CAF50"))
+                startLocationService()
             } else {
                 binding.tvStatus.text = "Not Working"
                 binding.tvStatus.setTextColor(Color.parseColor("#FF5252"))
+                stopLocationService()
             }
         }
+    }
+
+    /**
+     * Start Foreground Location Service
+     */
+    private fun startLocationService() {
+        val intent = Intent(this, LocationService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+    }
+
+    /**
+     * Stop Foreground Location Service
+     */
+    private fun stopLocationService() {
+        val intent = Intent(this, LocationService::class.java)
+        stopService(intent)
     }
 }
 data class Task(
