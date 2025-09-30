@@ -12,19 +12,30 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.hrbabu.tracking.databinding.ActivityMainBinding
+import com.hrbabu.tracking.helpers.MainActivityHelper
 import com.hrbabu.tracking.service.LocationService
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    lateinit var mainActivityHelper: MainActivityHelper
+    var email: String = ""
+    var password: String = ""
+
 
     companion object {
         private const val REQ_FOREGROUND_LOCATION = 100
         private const val REQ_BACKGROUND_LOCATION = 101
+    }
+
+    fun initHelper() {
+        mainActivityHelper = MainActivityHelper(this)
+        mainActivityHelper.init(thisActivity = this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initHelper()
 
         // Notification channel for Foreground Service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -49,8 +61,40 @@ class MainActivity : AppCompatActivity() {
             EnableLocationDialog {
                 requestForegroundLocationPermission()
             }.show(supportFragmentManager, "EnableLocationDialog")
+
         }
     }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+
+    private fun proceedWithLogin() {
+        email = binding.etEmail.text?.toString()?.trim() ?: ""
+        password = binding.etPassword.text?.toString()?.trim() ?: ""
+
+        when {
+            email.isEmpty() -> {
+                Toast.makeText(this, "Enter Email", Toast.LENGTH_SHORT).show()
+            }
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                Toast.makeText(this, "Enter a valid Email", Toast.LENGTH_SHORT).show()
+            }
+            password.isEmpty() -> {
+                Toast.makeText(this, "Enter Password", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+
+                mainActivityHelper.hitApi(MainActivityHelper.SIGNIN)
+            }
+        }
+    }
+
+
+
 
     /**
      * Step 1 → Request Foreground Location (FINE + COARSE)
