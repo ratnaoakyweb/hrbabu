@@ -1,0 +1,153 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/incHeader"
+            layout="@layout/common_header"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Request Leave"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Calendar -->
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginHorizontal="16dp"
+           android:background="@drawable/bg_box">
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/tvFrom"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:text="From"
+               android:textColor="@color/gray"
+               android:textSize="12sp"
+               app:layout_constraintTop_toTopOf="parent"
+               app:layout_constraintStart_toStartOf="parent"/>
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/tvFromDate"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:layout_marginTop="5dp"
+               android:text="Select Date"
+               android:textStyle="bold"
+               android:textColor="@color/black"
+               android:textSize="14sp"
+               app:layout_constraintTop_toBottomOf="@+id/tvFrom"
+               app:layout_constraintStart_toStartOf="parent"/>
+
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/tvTo"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:text="To"
+               android:textColor="@color/gray"
+               android:textSize="12sp"
+               app:layout_constraintTop_toTopOf="parent"
+               app:layout_constraintEnd_toEndOf="parent"/>
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/tvToDate"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:layout_marginTop="5dp"
+               android:text="Select Date"
+               android:textStyle="bold"
+               android:textColor="@color/black"
+               android:textSize="14sp"
+               app:layout_constraintTop_toBottomOf="@+id/tvTo"
+               app:layout_constraintEnd_toEndOf="parent"/>
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/tvLeaveCount"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"
+               android:text="0 Days"
+               android:textColor="@color/black"
+               android:textSize="14sp"
+               android:background="@drawable/bg_box"
+               app:layout_constraintBottom_toBottomOf="parent"
+               app:layout_constraintTop_toTopOf="parent"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"/>
+
+       </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <!-- Leave Type Dropdown -->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Leave Type"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/spinnerLeaveType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textColorHint="@color/grayShade"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/bg_box"
+            android:layout_marginHorizontal="16dp"
+            android:textColor="@color/black"
+            android:hint="Select Leave Type"/>
+
+        <!-- Reason -->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Reason"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"/>
+
+        <EditText
+            android:id="@+id/etReason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter reason for leave"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:textColorHint="@color/grayShade"
+            android:layout_marginTop="5dp"
+            android:gravity="start"
+            android:background="@drawable/bg_box"
+            android:layout_marginHorizontal="16dp"
+            android:textColor="@color/black"/>
+
+        <!-- Button -->
+        <Button
+            android:id="@+id/btnApply"
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Review &amp; Apply"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</ScrollView>

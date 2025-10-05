@@ -32,6 +32,9 @@
 
         <activity android:name=".HomeActivity" />
 
+        <activity android:name=".ApplyLeaveActivity"
+            android:screenOrientation="portrait"/>
+
         <service
             android:name=".service.LocationService"
             android:enabled="true"

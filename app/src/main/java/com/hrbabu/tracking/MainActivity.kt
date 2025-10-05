@@ -61,7 +61,10 @@ class MainActivity : AppCompatActivity() {
             EnableLocationDialog {
                 requestForegroundLocationPermission()
             }.show(supportFragmentManager, "EnableLocationDialog")
+        }
 
+        binding.tvForgotPassword.setOnClickListener {
+            startActivity(Intent(this,ApplyLeaveActivity::class.java))
         }
     }
 
