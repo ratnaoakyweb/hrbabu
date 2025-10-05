@@ -49,7 +49,7 @@ class LocationService : Service() {
         override fun onLocationResult(result: LocationResult) {
             for (location in result.locations) {
                 Log.d("LocationService", "Lat: ${location.latitude}, Lng: ${location.longitude}")
-                // TODO: Send to server / save
+
             }
         }
     }

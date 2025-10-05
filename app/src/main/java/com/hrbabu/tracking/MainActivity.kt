@@ -123,6 +123,9 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
                 REQ_BACKGROUND_LOCATION
             )
+        } else {
+            // No need for background location on older Android versions
+            checkGpsAndStartService()
         }
     }
 
@@ -139,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             REQ_FOREGROUND_LOCATION -> {
                 if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                    // Foreground granted → explain why we need background
+                    // Foreground granted → proceed to background permission
                     showBackgroundPermissionDialog()
                 } else {
                     Toast.makeText(this, "Foreground location permission required!", Toast.LENGTH_SHORT).show()
@@ -194,10 +197,9 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enable GPS to track attendance.", Toast.LENGTH_LONG).show()
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         } else {
-           startActivity(Intent(this, HomeActivity::class.java))
+            startActivity(Intent(this, HomeActivity::class.java))
             //startLocationService()
         }
     }
-
-
 }
+
