@@ -5,4 +5,5 @@ public class PrefKeys {
 
     public static final String isLoggedIn = "isLoggedIn";
     public static final String token = "token";
+    public static final String loginResponse = "loginResponse";
 }

@@ -1,57 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@android:color/white"
-    android:padding="12dp"
     android:layout_marginBottom="8dp"
-    android:elevation="2dp">
+    android:layout_margin="8dp"
+    android:elevation="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
-    <TextView
-        android:id="@+id/tvTaskTitle"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Payment Gateway Integration"
-        android:textStyle="bold"
-        android:textSize="15sp"/>
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="12dp">
 
-    <TextView
-        android:id="@+id/tvTaskSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="E-Commerce Platform"
-        android:textSize="13sp"
-        android:textColor="#888888"/>
-
-    <TextView
-        android:id="@+id/tvPriority"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="• Moderate"
-        android:textColor="#FF5722"
-        android:textSize="12sp"
-        android:layout_marginTop="4dp"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp">
+        <ImageView
+            android:id="@+id/icIcon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/icon_checkout"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
 
         <TextView
-            android:id="@+id/tvProgress"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toEndOf="@+id/icIcon"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="50%"
-            android:textSize="12sp"/>
+            android:text="CheckIn"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
 
         <TextView
-            android:id="@+id/tvDuration"
+            android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="   ⏱ 45 min"
-            android:textSize="12sp"/>
-    </LinearLayout>
+            android:layout_marginStart="10dp"
+            android:text="April 17.2025"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@+id/icIcon"
+            app:layout_constraintStart_toEndOf="@+id/icIcon"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="07:30"
+            android:textColor="#000"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/icIcon" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="April 17.2025"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@+id/icIcon"
+            app:layout_constraintEnd_toEndOf="@+id/tvTime"
+            app:layout_constraintTop_toBottomOf="@+id/tvTime" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

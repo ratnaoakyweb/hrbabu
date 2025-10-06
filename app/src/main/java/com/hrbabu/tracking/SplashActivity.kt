@@ -1,24 +1,36 @@
 package com.hrbabu.tracking
 
-import android.graphics.Bitmap
-import android.graphics.Color
+
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.viewModels
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.color.MaterialColors
-import com.hrbabu.tracking.database.PunchEvent
-import com.hrbabu.tracking.database.PunchViewModel
-import com.hrbabu.tracking.request_response.login.LoginResponse
-import com.hrbabu.tracking.utils.PrefKeys
-import com.hrbabu.tracking.utils.PrefUtil
-import java.io.File
-import java.io.FileOutputStream
+import androidx.core.view.ViewCompat.animate
 
-open class BaseActivity : AppCompatActivity()  {
+open class SplashActivity : AppCompatActivity()  {
+
+    private lateinit var binding: com.hrbabu.tracking.databinding.ActivitySplashBinding
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+        //full screen
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+
+
+        super.onCreate(savedInstanceState)
+        binding = com.hrbabu.tracking.databinding.ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        //Time for 2 seconds
+
+       animate(binding.root).alpha(1f).setDuration(2000).withEndAction {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
     }
 //    private val vm: PunchViewModel by viewModels()
@@ -49,10 +61,6 @@ open class BaseActivity : AppCompatActivity()  {
 //        }
 //        return file.absolutePath
 //    }
-    fun getLoginResponse() : LoginResponse? {
-        val gson = com.google.gson.Gson()
-        val loginJson = PrefUtil.Init(this).getString(PrefKeys.loginResponse)
-        return gson.fromJson(loginJson, LoginResponse::class.java)
-    }
+
 
 }

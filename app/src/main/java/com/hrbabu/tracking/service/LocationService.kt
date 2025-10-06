@@ -1,29 +1,30 @@
 package com.hrbabu.tracking.service
 
 import android.Manifest
-import android.R
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import androidx.core.app.NotificationManagerCompat
+import com.google.android.gms.location.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class LocationService : Service() {
 
     private lateinit var fusedLocationProvider: FusedLocationProviderClient
-
+    private var notificationBuilder: NotificationCompat.Builder? = null
+    private val notificationId = 1
+    private var currentLocation : Location? = null
     override fun onCreate() {
         super.onCreate()
         fusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
+        createNotification()
         requestLocationUpdates()
     }
 
@@ -48,21 +49,38 @@ class LocationService : Service() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             for (location in result.locations) {
-                Log.d("LocationService", "Lat: ${location.latitude}, Lng: ${location.longitude}")
-
+                val lat = location.latitude
+                val lng = location.longitude
+                val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
+                Log.d("LocationService", "Lat: $lat, Lng: $lng at $time")
+                currentLocation = location
+                updateNotification(lat, lng, time)
             }
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = NotificationCompat.Builder(this, "location_channel")
+    private fun createNotification() {
+        notificationBuilder = NotificationCompat.Builder(this, "location_channel")
             .setContentTitle("Tracking Attendance")
-            .setContentText("Location tracking is running…")
-            .setSmallIcon(R.drawable.ic_lock_idle_alarm)
+            .setContentText("Getting location…")
+            .setSmallIcon(android.R.drawable.ic_menu_mylocation)
             .setOngoing(true)
-            .build()
+            .setOnlyAlertOnce(true) // prevents repeated sound/vibration on updates
 
-        startForeground(1, notification)
+        startForeground(notificationId, notificationBuilder!!.build())
+    }
+
+    private fun updateNotification(lat: Double, lng: Double, time: String) {
+        notificationBuilder?.setContentText(
+            "Last: $lat, $lng at $time"
+        )
+        LocationLiveData.updateLocation(currentLocation!!) // update LiveData
+
+        NotificationManagerCompat.from(this).notify(notificationId, notificationBuilder!!.build())
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        createNotification()
         return START_STICKY
     }
 

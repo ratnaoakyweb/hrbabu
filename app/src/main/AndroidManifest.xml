@@ -23,18 +23,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HrBabu">
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.HrBabu">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".HomeActivity" />
-
+        <activity android:name=".activity.ActivityClientList"
+            android:theme="@style/Theme.HrBabu"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".HomeActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.AddNewClientActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ApplyLeaveActivity"
             android:screenOrientation="portrait"/>
 

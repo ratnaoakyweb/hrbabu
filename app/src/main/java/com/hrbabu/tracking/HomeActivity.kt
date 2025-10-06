@@ -12,7 +12,6 @@ import android.os.Looper
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,31 +26,118 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 import androidx.core.graphics.toColorInt
+import androidx.core.view.GravityCompat
+import com.hrbabu.tracking.activity.ActivityClientList
+import com.hrbabu.tracking.adapter.TaskAdapter
+import com.hrbabu.tracking.databinding.ItemTaskBinding
+import com.hrbabu.tracking.helpers.HomeActivityHelper
+import com.hrbabu.tracking.request_response.history.HistoryResponse
+import com.hrbabu.tracking.request_response.history.RcItem
+import com.hrbabu.tracking.service.LocationLiveData
+import com.hrbabu.tracking.utils.ButtonState
+import com.hrbabu.tracking.utils.CameraState
+import com.hrbabu.tracking.utils.PrefUtil
 
 class HomeActivity : BaseActivity() {
 
     private lateinit var binding: ActivityHomeBinding
-
+    private lateinit var homeActivityHelper: HomeActivityHelper
     companion object {
         private const val REQUEST_CHECK_SETTINGS = 3001
     }
 
-    private var pendingLocation: android.location.Location? = null
+    var pendingLocation: android.location.Location? = null
+    var filePath = ""
 
+    private lateinit var cameraCurrentState : CameraState
+
+    private lateinit var currentState: ButtonState
+    var selectedClientId = -1;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setButtonState(ButtonState.INACTIVE)
+        homeActivityHelper = HomeActivityHelper(this)
+        homeActivityHelper.init(thisActivity = this)
+        binding.navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+//                R.id.nav_home -> { /* Navigate */ }
+                R.id.nav_profile -> { /* Show profile */ }
+                R.id.nav_logout -> { logout()}
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
 
-        val tasks = listOf(
-            Task("Payment Gateway Integration", "E-Commerce Platform", "Moderate", "50%", "45 min"),
-            Task("Contact Form Integration", "E-Commerce Platform", "Moderate", "50%", "45 min"),
-            Task("Grid Integration", "E-Commerce Platform", "Moderate", "50%", "45 min")
-        )
+        binding.ivMenu.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+
+
+
+
 
         binding.recyclerTasks.layoutManager = LinearLayoutManager(this)
-        // binding.recyclerTasks.adapter = TaskAdapter(tasks)
+//         binding.recyclerTasks.adapter = TaskAdapter(tasks)
 
+
+
+        homeActivityHelper.hitApi(HomeActivityHelper.GetHistory)
+
+
+        binding.btnClockOut.setOnClickListener {
+            if(binding.switchPunchIn.isChecked){
+
+                if(currentState == ButtonState.CHECK_IN){
+//                    Toast.makeText(this, "You are Checked In now", Toast.LENGTH_SHORT).show()
+//                    setButtonState(ButtonState.CHECK_OUT)
+                    val intent = (Intent(this, ActivityClientList::class.java))
+                    clientLauncher.launch(intent)
+
+                }
+
+            }else{
+                Toast.makeText(this, "You are Inactive now", Toast.LENGTH_SHORT).show()
+                setButtonState(ButtonState.INACTIVE)
+            }
+        }
+
+    }
+
+    private val clientLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            val selectedClient = data?.getIntExtra("clientId",-1)
+            selectedClientId = selectedClient ?: -1
+            if(selectedClientId != -1){
+                cameraCurrentState = CameraState.CHECK_IN
+                captureAccurateLocation { location ->
+                    if (location != null) {
+                        pendingLocation = location
+                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                    }
+                    else {
+//                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+//                        binding.switchPunchIn.isChecked = false
+
+//                        pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
+//                            latitude = 0.0
+//                            longitude = 0.0
+//                        }
+//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+
+                    }
+
+                }
+            }
+        }
+    }
+
+    fun setupToggel(){
         // Punch-in toggle
         binding.switchPunchIn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -61,6 +147,7 @@ class HomeActivity : BaseActivity() {
                 captureAccurateLocation { location ->
                     if (location != null) {
                         pendingLocation = location
+                        cameraCurrentState = CameraState.PUNCH_IN
                         openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
                     } else {
 //                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
@@ -78,7 +165,40 @@ class HomeActivity : BaseActivity() {
             } else {
                 binding.tvStatus.text = "Not Working"
                 binding.tvStatus.setTextColor(Color.parseColor("#FF5252"))
-                stopLocationService()
+                cameraCurrentState = CameraState.PUNCH_OUT
+                captureAccurateLocation { location ->
+                    if (location != null) {
+                        pendingLocation = location
+                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                    } else {
+//                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+//                        binding.switchPunchIn.isChecked = false
+
+                        pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
+                            latitude = 0.0
+                            longitude = 0.0
+                        }
+                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+
+                    }
+                    stopLocationService()
+                }
+            }
+        }
+    }
+
+    fun setHistoryData(response: HistoryResponse?){
+        if(response!=null){
+            if((response.rc?.size ?: 0) > 0){
+                if((response.rc?.get(0)?.activityType ?: "") == "Punch In"){
+                    binding.switchPunchIn.isChecked=true
+                    startLocationService()
+                    setButtonState(ButtonState.CHECK_IN)
+                }else if((response.rc?.get(0)?.activityType ?: "") == "Punch Out"){
+                    binding.switchPunchIn.isChecked=false
+                }
+
+                binding.recyclerTasks.adapter = TaskAdapter(response.rc as List<RcItem>)
             }
         }
     }
@@ -104,55 +224,63 @@ class HomeActivity : BaseActivity() {
      * GPS capture with system dialog if disabled
      */
     private fun captureAccurateLocation(callback: (android.location.Location?) -> Unit) {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY, 2000L
-        )
-            .setWaitForAccurateLocation(true)
-            .setMaxUpdates(1)
-            .build()
-
-        val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
-            .setAlwaysShow(true)
-
-        val settingsClient = LocationServices.getSettingsClient(this)
-        val task = settingsClient.checkLocationSettings(builder.build())
-
-        task.addOnSuccessListener {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                callback(null)
-                return@addOnSuccessListener
-            }
-
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                object : LocationCallback() {
-                    override fun onLocationResult(result: LocationResult) {
-                        fusedLocationClient.removeLocationUpdates(this)
-                        callback(result.lastLocation)
-                    }
-                },
-                Looper.getMainLooper()
-            )
+        LocationLiveData.getLastLocation()?.let {
+            val lat = it.latitude
+            val lng = it.longitude
+            callback(it)
+//            val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
+//            binding.tvLocation.text = "Lat: $lat, Lng: $lng at $time"
         }
 
-        task.addOnFailureListener { e ->
-            if (e is ResolvableApiException) {
-                try {
-                    e.startResolutionForResult(this, REQUEST_CHECK_SETTINGS)
-                } catch (_: Exception) {
-                    callback(null)
-                }
-            } else {
-                callback(null)
-            }
-        }
+//        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+//
+//        val locationRequest = LocationRequest.Builder(
+//            Priority.PRIORITY_HIGH_ACCURACY, 2000L
+//        )
+//            .setWaitForAccurateLocation(true)
+//            .setMaxUpdates(1)
+//            .build()
+//
+//        val builder = LocationSettingsRequest.Builder()
+//            .addLocationRequest(locationRequest)
+//            .setAlwaysShow(true)
+//
+//        val settingsClient = LocationServices.getSettingsClient(this)
+//        val task = settingsClient.checkLocationSettings(builder.build())
+//
+//        task.addOnSuccessListener {
+//            if (ActivityCompat.checkSelfPermission(
+//                    this,
+//                    Manifest.permission.ACCESS_FINE_LOCATION
+//                ) != PackageManager.PERMISSION_GRANTED
+//            ) {
+//                callback(null)
+//                return@addOnSuccessListener
+//            }
+//
+//            fusedLocationClient.requestLocationUpdates(
+//                locationRequest,
+//                object : LocationCallback() {
+//                    override fun onLocationResult(result: LocationResult) {
+//                        fusedLocationClient.removeLocationUpdates(this)
+//                        callback(result.lastLocation)
+//                    }
+//                },
+//                Looper.getMainLooper()
+//            )
+//        }
+//
+//        task.addOnFailureListener { e ->
+//            if (e is ResolvableApiException) {
+//                try {
+//                    e.startResolutionForResult(this, REQUEST_CHECK_SETTINGS)
+//                } catch (_: Exception) {
+//                    callback(null)
+//                }
+//            } else {
+//                callback(null)
+//            }
+//        }
     }
 
     /**
@@ -164,7 +292,7 @@ class HomeActivity : BaseActivity() {
                 val bitmap = result.data?.extras?.get("data") as? Bitmap
                 if (bitmap != null && pendingLocation != null) {
                     val imagePath = saveImageToCache(bitmap)
-
+                    filePath = imagePath
                     // Reverse geocode
                     val geocoder = android.location.Geocoder(this, Locale.getDefault())
                     val addresses =
@@ -187,10 +315,21 @@ class HomeActivity : BaseActivity() {
                             .insert(punchEvent)
                         Toast.makeText(this@HomeActivity, "Punch-In saved locally", Toast.LENGTH_SHORT).show()
                     }
+                    if(cameraCurrentState == CameraState.PUNCH_IN){
+                        homeActivityHelper.hitApi(HomeActivityHelper.PunchIn)
+                    }else if (cameraCurrentState == CameraState.PUNCH_OUT){
+                        homeActivityHelper.hitApi(HomeActivityHelper.PunchOut)
+                    }else if(cameraCurrentState == CameraState.CHECK_IN){
+                        homeActivityHelper.hitApi(HomeActivityHelper.CheckIn)
+                    }else if (cameraCurrentState == CameraState.CHECK_OUT){
+                        homeActivityHelper.hitApi(HomeActivityHelper.CheckOut)
+                    }
+
+
                 }
             } else {
-                binding.switchPunchIn.isChecked = false
-                Toast.makeText(this, "Camera cancelled", Toast.LENGTH_SHORT).show()
+                binding.switchPunchIn.isChecked =  !binding.switchPunchIn.isChecked
+                //Toast.makeText(this, "Camera cancelled", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -222,12 +361,43 @@ class HomeActivity : BaseActivity() {
             }
         }
     }
+
+    fun logout() {
+        // Clear user session data (e.g., SharedPreferences)
+        PrefUtil.Init(this).clearALl()
+
+        // Navigate to LoginActivity
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun setButtonState(state: ButtonState) {
+        currentState = state
+        when (state) {
+            ButtonState.CHECK_IN -> {
+                binding.btnClockOut.text = "Check In"
+                binding.btnClockOut.setBackgroundColor(Color.parseColor("#4CAF50")) // Green
+                binding.btnClockOut.setTextColor(Color.WHITE)
+            }
+            ButtonState.INACTIVE -> {
+                binding.btnClockOut.text = "Inactive"
+                binding.btnClockOut.setBackgroundColor(Color.parseColor("#BDBDBD")) // Gray
+                binding.btnClockOut.setTextColor(Color.WHITE)
+            }
+            ButtonState.CHECK_OUT -> {
+                binding.btnClockOut.text = "Check Out"
+                binding.btnClockOut.setBackgroundColor(Color.parseColor("#FF5252")) // Red
+                binding.btnClockOut.setTextColor(Color.WHITE)
+            }
+        }
+    }
+
+
 }
 
-data class Task(
-    val title: String,
-    val subTitle: String,
-    val priority: String,
-    val progress: String,
-    val duration: String
-)
+
+
+
+
