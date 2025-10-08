@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -28,6 +29,7 @@ import java.util.*
 import androidx.core.graphics.toColorInt
 import androidx.core.view.GravityCompat
 import com.hrbabu.tracking.activity.ActivityClientList
+import com.hrbabu.tracking.activity.ActivityVisitList
 import com.hrbabu.tracking.adapter.TaskAdapter
 import com.hrbabu.tracking.databinding.ItemTaskBinding
 import com.hrbabu.tracking.helpers.HomeActivityHelper
@@ -53,6 +55,8 @@ class HomeActivity : BaseActivity() {
 
     private lateinit var currentState: ButtonState
     var selectedClientId = -1;
+    var selectedVisitId = -1;
+    var selectedVisitCheckInId = -1;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -84,26 +88,47 @@ class HomeActivity : BaseActivity() {
 
 
 
-        homeActivityHelper.hitApi(HomeActivityHelper.GetHistory)
+        homeActivityHelper.hitApi(HomeActivityHelper.GetToggel)
 
 
         binding.btnClockOut.setOnClickListener {
+            if(binding.llLocation.visibility == View.VISIBLE){
+                Toast.makeText(this, "Please wait location is being captured", Toast.LENGTH_LONG).show()
+
+               return@setOnClickListener
+            }
             if(binding.switchPunchIn.isChecked){
-
-                if(currentState == ButtonState.CHECK_IN){
-//                    Toast.makeText(this, "You are Checked In now", Toast.LENGTH_SHORT).show()
-//                    setButtonState(ButtonState.CHECK_OUT)
-                    val intent = (Intent(this, ActivityClientList::class.java))
-                    clientLauncher.launch(intent)
-
-                }
+                startActivity(Intent(this, ActivityVisitList::class.java))
+//                if(currentState == ButtonState.CHECK_IN){
+//                    val intent = (Intent(this, ActivityClientList::class.java))
+//                    clientLauncher.launch(intent)
+//
+//                }else{
+//                        cameraCurrentState = CameraState.CHECK_OUT
+//                        captureAccurateLocation { location ->
+//                            if (location != null) {
+//                                pendingLocation = location
+//                                openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//                            }
+//                            else {
+//                                    Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+//                            }
+//
+//                        }
+//                }
 
             }else{
                 Toast.makeText(this, "You are Inactive now", Toast.LENGTH_SHORT).show()
-                setButtonState(ButtonState.INACTIVE)
+
             }
         }
+        binding.llLocation.visibility= View.VISIBLE
+        getCurrentLocation()
 
+
+        //set current date and day
+
+        binding.tvDate.text = android.text.format.DateFormat.format("dd MMM, EEEE", Date())
     }
 
     private val clientLauncher = registerForActivityResult(
@@ -137,9 +162,32 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    fun setupToggel(){
+    fun setupToggel( isPunchIn : Boolean ,  isVisitCheckIn: Boolean){
         // Punch-in toggle
+        binding.switchPunchIn.isChecked = isPunchIn
+        if(isVisitCheckIn){
+        setButtonState(ButtonState.CHECK_OUT)
+        }
+        if(!isPunchIn){
+            setButtonState(ButtonState.INACTIVE)
+        }
         binding.switchPunchIn.setOnCheckedChangeListener { _, isChecked ->
+
+
+            if(binding.llLocation.visibility == View.VISIBLE){
+                Toast.makeText(this, "Please wait location is being captured", Toast.LENGTH_LONG).show()
+                binding.switchPunchIn.isChecked = !isChecked
+                return@setOnCheckedChangeListener
+            }
+
+            captureAccurateLocation { location ->
+
+                if(location == null){
+                    Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+                    binding.switchPunchIn.isChecked = !isChecked
+                    return@captureAccurateLocation
+                }
+            }
             if (isChecked) {
                 binding.tvStatus.text = "Working"
                 binding.tvStatus.setTextColor("#4CAF50".toColorInt())
@@ -193,7 +241,7 @@ class HomeActivity : BaseActivity() {
                 if((response.rc?.get(0)?.activityType ?: "") == "Punch In"){
                     binding.switchPunchIn.isChecked=true
                     startLocationService()
-                    setButtonState(ButtonState.CHECK_IN)
+
                 }else if((response.rc?.get(0)?.activityType ?: "") == "Punch Out"){
                     binding.switchPunchIn.isChecked=false
                 }
@@ -207,12 +255,12 @@ class HomeActivity : BaseActivity() {
      * Foreground location service
      */
     private fun startLocationService() {
-        val intent = Intent(this, LocationService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
+//        val intent = Intent(this, LocationService::class.java)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            startForegroundService(intent)
+//        } else {
+//            startService(intent)
+//        }
     }
 
     private fun stopLocationService() {
@@ -220,18 +268,76 @@ class HomeActivity : BaseActivity() {
         stopService(intent)
     }
 
+
+     fun getCurrentLocation(){
+
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+//
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY, 2000L
+        )
+            .setWaitForAccurateLocation(true)
+            .setMaxUpdates(1)
+            .build()
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .setAlwaysShow(true)
+
+        val settingsClient = LocationServices.getSettingsClient(this)
+        val task = settingsClient.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+
+                return@addOnSuccessListener
+            }
+
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                object : LocationCallback() {
+                    override fun onLocationResult(result: LocationResult) {
+//                        fusedLocationClient.removeLocationUpdates(this)
+                        binding.llLocation.visibility= View.GONE
+                        Toast.makeText(this@HomeActivity, "Location captured", Toast.LENGTH_SHORT).show()
+//                        callback(result.lastLocation)
+                        pendingLocation=result.lastLocation
+                    }
+                },
+                Looper.getMainLooper()
+            )
+        }
+
+        task.addOnFailureListener { e ->
+            homeActivityHelper.hideProgressDialog()
+            binding.llLocation.visibility= View.VISIBLE
+            binding.tvLocation.text= "Location Not captured"
+//            Toast.makeText(this@HomeActivity, "Location Not captured", Toast.LENGTH_SHORT).show()
+            if (e is ResolvableApiException) {
+                try {
+                    e.startResolutionForResult(this, REQUEST_CHECK_SETTINGS)
+                } catch (_: Exception) {
+//                    callback(null)
+                }
+            } else {
+//                callback(null)
+            }
+        }
+    }
+
     /**
      * GPS capture with system dialog if disabled
      */
     private fun captureAccurateLocation(callback: (android.location.Location?) -> Unit) {
         LocationLiveData.getLastLocation()?.let {
-            val lat = it.latitude
-            val lng = it.longitude
             callback(it)
+        }
 //            val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
 //            binding.tvLocation.text = "Lat: $lat, Lng: $lng at $time"
-        }
-
 //        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 //
 //        val locationRequest = LocationRequest.Builder(
@@ -373,7 +479,7 @@ class HomeActivity : BaseActivity() {
         finish()
     }
 
-    private fun setButtonState(state: ButtonState) {
+    fun setButtonState(state: ButtonState) {
         currentState = state
         when (state) {
             ButtonState.CHECK_IN -> {

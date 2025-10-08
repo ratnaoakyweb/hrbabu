@@ -1,5 +1,11 @@
 package com.hrbabu.tracking.apiBase.apiList
 
+import com.hrbabu.tracking.request_response.addclient.AddClientRequest
+import com.hrbabu.tracking.request_response.emptoggel.ResponseGetEmployeeActivityToggle
+import com.hrbabu.tracking.request_response.empvisit.EmpVisitRequest
+import com.hrbabu.tracking.request_response.empvisit.EmpVisitResponse
+import com.hrbabu.tracking.request_response.empvisit.SaveEmpVisitRequest
+import com.hrbabu.tracking.request_response.empvisit.SaveEmpVisitResponse
 import io.reactivex.Observable
 import com.hrbabu.tracking.request_response.getResponse.GetResponse
 import com.hrbabu.tracking.request_response.getclient.GetClientRequest
@@ -30,9 +36,20 @@ interface ApiList {
     @GET("/api/Employee/GetEmployeePunchingHistory")
     fun getHistory(): Observable<HistoryResponse>
 
+    @GET("/api/Employee/GetEmployeeActivityToggle")
+    fun getEmployeeActivityToggle(): Observable<ResponseGetEmployeeActivityToggle>
+
+    @POST("/api/Employee/GetEmployeeVisits")
+    fun getEmployeeVisits(@Body request: EmpVisitRequest): Observable<EmpVisitResponse>
+
+    @POST("/api/Employee/SaveEmployeeVisit")
+    fun saveEmployeeVisit(@Body request: SaveEmpVisitRequest): Observable<SaveEmpVisitResponse>
 
     @POST("/api/Employee/GetClients")
     fun getClients(@Body request: GetClientRequest): Observable<GetClientResponse>
+
+    @POST("/api/Employee/SaveClient")
+    fun saveClients(@Body request: AddClientRequest): Observable<GetClientResponse>
 
     @Multipart
     @POST("api/Employee/EmpPunchInOut")

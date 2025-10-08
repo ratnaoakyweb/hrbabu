@@ -52,7 +52,7 @@ class LocationService : Service() {
                 val lat = location.latitude
                 val lng = location.longitude
                 val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
-                Log.d("LocationService", "Lat: $lat, Lng: $lng at $time")
+//                Log.d("LocationService", "Lat: $lat, Lng: $lng at $time")
                 currentLocation = location
                 updateNotification(lat, lng, time)
             }

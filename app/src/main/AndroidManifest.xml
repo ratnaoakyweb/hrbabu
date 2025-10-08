@@ -44,7 +44,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ApplyLeaveActivity"
             android:screenOrientation="portrait"/>
-
+        <activity android:name=".activity.ActivityVisitList"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.AddVisitActivity"
+            android:screenOrientation="portrait"/>
         <service
             android:name=".service.LocationService"
             android:enabled="true"

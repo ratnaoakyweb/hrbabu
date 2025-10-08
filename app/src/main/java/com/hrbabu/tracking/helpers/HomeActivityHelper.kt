@@ -5,9 +5,12 @@ import android.widget.Toast
 import com.hrbabu.tracking.apiBase.BaseHelperActivity
 import com.hrbabu.tracking.apiBase.CallbackWrapper
 import com.hrbabu.tracking.helpers.LoginActivityHelper.Companion.SIGNIN
+import com.hrbabu.tracking.request_response.emptoggel.ResponseGetEmployeeActivityToggle
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.punchinpunchout.PunchinPunchoutResponse
+import com.hrbabu.tracking.utils.ButtonState
 import com.hrbabu.tracking.utils.getApiClientAuth
+import com.hrbabu.tracking.utils.getCurrentUtcTime
 import com.hrbabu.tracking.utils.sendApiRequest
 import com.social.pe.interfaces.OnRerty
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -27,6 +30,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
         const val PunchOut = "3"
         const val CheckIn = "4"
         const val CheckOut = "5"
+        const val GetToggel = "6"
     }
     override fun hitApi(apiKey: String) {
         showProgressDialog()
@@ -41,8 +45,10 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
 
                         homeActivity.setHistoryData(t)
 
-                        homeActivity.setupToggel()
+
                         hideProgressDialog()
+
+                        //homeActivity.getCurrentLocation()
 
                     }
 
@@ -56,7 +62,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         showRetryDialog(object : OnRerty {
                             override fun onRetry() {
                                 dismissDialog()
-                                hitApi(SIGNIN)
+                                hitApi(GetHistory)
                             }
                         })
                     }
@@ -95,6 +101,8 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     sendApiRequest(apiCall)!!.subscribeWith(object : CallbackWrapper<PunchinPunchoutResponse?>() {
                         override fun onSuccess(t: PunchinPunchoutResponse?) {
                             hideProgressDialog()
+                            homeActivity.setButtonState(ButtonState.CHECK_IN)
+                            hitApi(GetHistory)
                             Toast.makeText(homeActivity, t?.msgkey ?: "Success", Toast.LENGTH_SHORT).show()
                             Log.d("PunchInRes", t.toString())
                         }
@@ -109,6 +117,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                             showRetryDialog(object : OnRerty {
                                 override fun onRetry() {
                                     dismissDialog()
+                                    hitApi(PunchIn)
                                    // hitPunchInApi(filePath)
                                 }
                             })
@@ -144,6 +153,8 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 sendApiRequest(apiCall)!!.subscribeWith(object : CallbackWrapper<PunchinPunchoutResponse?>() {
                     override fun onSuccess(t: PunchinPunchoutResponse?) {
                         hideProgressDialog()
+                        homeActivity.setButtonState(ButtonState.INACTIVE)
+                        hitApi(GetHistory)
                         Toast.makeText(homeActivity, t?.msgkey ?: "Success", Toast.LENGTH_SHORT).show()
                         Log.d("PunchInRes", t.toString())
                     }
@@ -158,6 +169,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         showRetryDialog(object : OnRerty {
                             override fun onRetry() {
                                 dismissDialog()
+                                hitApi(PunchOut)
                                 // hitPunchInApi(filePath)
                             }
                         })
@@ -194,6 +206,8 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         hideProgressDialog()
                         Toast.makeText(homeActivity, t?.msgkey ?: "Success", Toast.LENGTH_SHORT).show()
                         Log.d("PunchInRes", t.toString())
+                        homeActivity.setButtonState(ButtonState.CHECK_OUT)
+                        hitApi(GetHistory)
                     }
 
                     override fun onError(t: String?) {
@@ -206,6 +220,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         showRetryDialog(object : OnRerty {
                             override fun onRetry() {
                                 dismissDialog()
+                                hitApi(CheckIn)
                                 // hitPunchInApi(filePath)
                             }
                         })
@@ -215,6 +230,122 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     override fun onLogout() { hideProgressDialog() }
                 }))
         }
+        else if(apiKey == CheckOut){
+
+            val file = File(homeActivity.filePath)
+            val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            val serverFile = MultipartBody.Part.createFormData("CheckOutFile", file.name, requestFile)
+
+            val textPlain = "text/plain".toMediaTypeOrNull()
+
+            val apiCall = getApiClientAuth(homeActivity).empCheckInCheckOut(
+                CheckInFile = null,
+                CheckOutFile = serverFile,
+                Flag = "U".toRequestBody(textPlain),  // "I" for Punch In, "O" for Punch Out
+                ClientId =  homeActivity.selectedClientId.toString().toRequestBody(textPlain),
+                CheckInTime = "".toRequestBody(textPlain),
+                CheckInLat = "".toRequestBody(textPlain),
+                CheckInLng = "".toRequestBody(textPlain),
+                CheckOutLat = homeActivity.pendingLocation!!.latitude.toString().toRequestBody(textPlain),
+                CheckOutLng = homeActivity.pendingLocation!!.longitude.toString().toRequestBody(textPlain),
+                CheckOutTime =getCurrentUtcTime().toRequestBody(textPlain),
+
+            )
+
+            disposables.add(
+                sendApiRequest(apiCall)!!.subscribeWith(object : CallbackWrapper<PunchinPunchoutResponse?>() {
+                    override fun onSuccess(t: PunchinPunchoutResponse?) {
+                        hideProgressDialog()
+                        Toast.makeText(homeActivity, t?.res?.message ?: "", Toast.LENGTH_SHORT).show()
+                        if(t?.rs ==1) {
+                            Log.d("PunchInRes", t.toString())
+                            homeActivity.setButtonState(ButtonState.CHECK_IN)
+                            hitApi(GetHistory)
+                        }
+                        }
+
+                    override fun onError(t: String?) {
+                        hideProgressDialog()
+                        Toast.makeText(homeActivity, t ?: "Error", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onTimeout() {
+                        hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(CheckIn)
+                                // hitPunchInApi(filePath)
+                            }
+                        })
+                    }
+
+                    override fun onUnknownError() { hideProgressDialog() }
+                    override fun onLogout() { hideProgressDialog() }
+                }))
+        }
+        else if(apiKey == GetToggel){
+
+            disposables.add(
+                sendApiRequest(
+                    getApiClientAuth(homeActivity.applicationContext).getEmployeeActivityToggle()
+                )!!.subscribeWith(object : CallbackWrapper<ResponseGetEmployeeActivityToggle?>() {
+                    override fun onSuccess(t: ResponseGetEmployeeActivityToggle?) {
+
+                        var isPunchIn = false
+                        var isVisitCheckIn = false
+
+                        // Get the list safely
+                        val list = t?.rc ?: emptyList()
+                        list.forEach { item ->
+                            when (item?.activityType?.trim()?.lowercase()) {
+                                "punch in" -> isPunchIn = true
+                                "visit check in" -> {
+                                    isVisitCheckIn = true
+                                    homeActivity.selectedClientId=item.clientId ?: -1
+                                    homeActivity.selectedVisitId=item.visitId ?: -1
+                                    homeActivity.selectedVisitCheckInId=item.visitCheckInId ?: -1
+                                }
+                            }
+                        }
+
+//                        homeActivity.setHistoryData(t)
+//
+                        homeActivity.setupToggel(isPunchIn , isVisitCheckIn)
+//                        hideProgressDialog()
+
+                        hitApi(GetHistory)
+
+                    }
+
+                    override fun onError(t: String?) {
+                        hideProgressDialog()
+                        Toast.makeText(homeActivity.applicationContext,t?:"", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onTimeout() {
+                        hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(GetToggel)
+                            }
+                        })
+                    }
+
+                    override fun onUnknownError() {
+                        hideProgressDialog()
+                        //Toast.makeText(fragment.requireContext(),"onUnknownError", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onLogout() {
+                        hideProgressDialog()
+//                    Toast.makeText(fragment.requireContext(),"onLogout", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            )
+        }
+
 
 
 
@@ -222,11 +353,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
 
         }
 
-    private fun getCurrentUtcTime(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        sdf.timeZone = TimeZone.getTimeZone("UTC")
-        return sdf.format(Date())
-    }
+
 
 
 

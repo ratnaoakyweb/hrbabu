@@ -40,6 +40,7 @@ class LoginActivityHelper(val loginActivity : LoginActivity) : BaseHelperActivit
                         val gson = com.google.gson.Gson()
                         val loginJson = gson.toJson(t)
                         PrefUtil.Init(loginActivity.applicationContext).save(PrefKeys.loginResponse, loginJson)
+                        loginActivity.startService()
                         loginActivity.startActivity(Intent(loginActivity, HomeActivity::class.java))
                         loginActivity.finish()
 

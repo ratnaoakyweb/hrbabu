@@ -1,7 +1,9 @@
 package com.hrbabu.tracking
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -10,6 +12,7 @@ import com.google.android.material.color.MaterialColors
 import com.hrbabu.tracking.database.PunchEvent
 import com.hrbabu.tracking.database.PunchViewModel
 import com.hrbabu.tracking.request_response.login.LoginResponse
+import com.hrbabu.tracking.service.LocationService
 import com.hrbabu.tracking.utils.PrefKeys
 import com.hrbabu.tracking.utils.PrefUtil
 import java.io.File
@@ -20,6 +23,16 @@ open class BaseActivity : AppCompatActivity()  {
         super.onCreate(savedInstanceState)
 
 
+    }
+
+    fun startService()
+    {
+//        val intent = Intent(this, LocationService::class.java)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            startForegroundService(intent)
+//        } else {
+//            startService(intent)
+//        }
     }
 //    private val vm: PunchViewModel by viewModels()
 //    fun onCapturedPunch(bitmap: Bitmap, lat: Double?, lng: Double?, address: String?) {

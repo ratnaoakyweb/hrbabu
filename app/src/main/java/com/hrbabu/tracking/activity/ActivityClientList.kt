@@ -1,8 +1,10 @@
 package com.hrbabu.tracking.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hrbabu.tracking.BaseActivity
@@ -18,6 +20,20 @@ class ActivityClientList : BaseActivity() {
     private lateinit var adapter: ClientAdapter
     var clientList: List<ClientsItem?> = listOf()
     private  lateinit var activityClientListHelper : ActivityClientListHelper
+    private val startForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data?.getBooleanExtra("callback", false)
+            if(data ?: true){
+            {
+                activityClientListHelper.hitApi(GET_CLIENT_LIST)
+
+            }
+        }
+    }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityClientListBinding.inflate(layoutInflater)
@@ -33,10 +49,15 @@ class ActivityClientList : BaseActivity() {
         }
 
         binding.btnAddNewClient.setOnClickListener {
-            startActivity(Intent(this, AddNewClientActivity::class.java))
+
+
+            startForResult.launch(Intent(this, AddNewClientActivity::class.java))
         }
 
     }
+
+
+
 
     private fun setupRecyclerView() {
         binding.recyclerViewClients.layoutManager = LinearLayoutManager(this)

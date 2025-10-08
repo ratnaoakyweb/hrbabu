@@ -1,8 +1,8 @@
-package com.hrbabu.tracking.request_response.getclient
+package com.hrbabu.tracking.request_response.addclient
 
 import com.google.gson.annotations.SerializedName
 
-data class ClientsItem(
+data class AddClientRequest(
 
 	@field:SerializedName("ClientName")
 	val clientName: String? = null,
@@ -25,45 +25,18 @@ data class ClientsItem(
 	@field:SerializedName("IsActive")
 	val isActive: Boolean? = null,
 
-	@field:SerializedName("CreatedDate")
-	val createdDate: String? = null,
-
 	@field:SerializedName("ClientId")
 	val clientId: Int? = null,
 
 	@field:SerializedName("Website")
 	val website: String? = null,
 
+	@field:SerializedName("Flag")
+	val flag: String? = "I",
+
 	@field:SerializedName("LocationLat")
 	val locationLat: String? = null,
 
 	@field:SerializedName("LocationLong")
 	val locationLong: String? = null
-)
-
-data class Res(
-
-	@field:SerializedName("TotalRecords")
-	val totalRecords: Int? = null,
-
-	@field:SerializedName("Message")
-	val message: String? = null,
-
-	@field:SerializedName("Clients")
-	val clients: List<ClientsItem?>? = null
-)
-
-data class GetClientResponse(
-
-	@field:SerializedName("rs")
-	val rs: Int? = null,
-
-	@field:SerializedName("res")
-	val res: Res? = null,
-
-	@field:SerializedName("rc")
-	val rc: List<Any?>? = null,
-
-	@field:SerializedName("msgkey")
-	val msgkey: String? = null
 )
