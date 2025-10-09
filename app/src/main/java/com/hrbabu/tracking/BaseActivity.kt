@@ -12,6 +12,7 @@ import com.google.android.material.color.MaterialColors
 import com.hrbabu.tracking.database.PunchEvent
 import com.hrbabu.tracking.database.PunchViewModel
 import com.hrbabu.tracking.request_response.login.LoginResponse
+import com.hrbabu.tracking.request_response.profile.ProfileResponse
 import com.hrbabu.tracking.service.LocationService
 import com.hrbabu.tracking.utils.PrefKeys
 import com.hrbabu.tracking.utils.PrefUtil
@@ -67,5 +68,14 @@ open class BaseActivity : AppCompatActivity()  {
         val loginJson = PrefUtil.Init(this).getString(PrefKeys.loginResponse)
         return gson.fromJson(loginJson, LoginResponse::class.java)
     }
+
+    fun getProfileResponse(): ProfileResponse?{
+        val gson = com.google.gson.Gson()
+        val profileJson = PrefUtil.Init(this).getString(PrefKeys.profileResponse)
+        return gson.fromJson(profileJson, ProfileResponse::class.java)
+    }
+
+
+
 
 }

@@ -1,5 +1,7 @@
 package com.hrbabu.tracking.fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +23,6 @@ class FragmentVisitUpcoming : Fragment() {
         binding = FragmentVisitUpcomingBinding.inflate(inflater, container, false)
 
 
-
 //        binding.recyclerViewUpcoming.layoutManager = LinearLayoutManager(requireContext())
 //        binding.recyclerViewUpcoming.adapter = VisitAdapter(dummyList)
         return binding.root
@@ -35,8 +36,30 @@ class FragmentVisitUpcoming : Fragment() {
 //        )
 
         //set visit list to recycler view
-        binding.recyclerViewUpcoming.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewUpcoming.adapter = VisitAdapter(visitList)
+
+        if (visitList.isNullOrEmpty()) {
+            binding.recyclerViewUpcoming.visibility = View.GONE
+            binding.emptyLayout.visibility = View.VISIBLE
+        } else {
+            binding.recyclerViewUpcoming.visibility = View.VISIBLE
+            binding.emptyLayout.visibility = View.GONE
+            val adapter = VisitAdapter(visitList){
+                    visitItem ->
+                val intent  = Intent()
+                intent.putExtra("client_id", visitItem?.clientId)
+                intent.putExtra("visit_id", visitItem?.visitId)
+                activity?.setResult(Activity.RESULT_OK,intent)
+                activity?.finish()
+
+            }
+            binding.recyclerViewUpcoming.layoutManager = LinearLayoutManager(requireContext())
+            binding.recyclerViewUpcoming.adapter = adapter
+        }
+
+
+
+
+
 
     }
 

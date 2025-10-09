@@ -24,7 +24,9 @@ class ActivityVisitList : BaseActivity() {
         setContentView(binding.root)
         helper = ActivityVisitListHelper(this)
         helper.init(this)
-
+        binding.btnBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         binding.viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = 1
             override fun createFragment(position: Int): Fragment {

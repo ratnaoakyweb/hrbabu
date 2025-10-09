@@ -23,6 +23,6 @@
     <color name="black_shade">#282828</color>
     <color name="gray">#979797</color>
     <color name="grayShade">#c3c3c3</color>
-
+    <color name="colorPrimaryLight">#3B78B345</color>
 
 </resources>

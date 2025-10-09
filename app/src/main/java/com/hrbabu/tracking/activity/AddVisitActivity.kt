@@ -4,6 +4,8 @@ package com.hrbabu.tracking.activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +22,8 @@ class AddVisitActivity : AppCompatActivity() {
     private lateinit var helper: ActivityAddVisitHelper
     val clientNames = mutableListOf("Select Client")
     val clientId = mutableListOf("Select Client")
+    var selectedFromTime = ""
+    var selectedToTime = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddVisitBinding.inflate(layoutInflater)
@@ -46,7 +50,37 @@ class AddVisitActivity : AppCompatActivity() {
     private fun setupUI() {
         // Back button
         binding.btnBack.setOnClickListener { finish() }
+// Purpose spinner
+        val purposes = listOf(
+            "Select Purpose",
+            "Demonstration",
+            "Follow up",
+            "New Business",
+            "Support Visit",
+            "Unknown"
+        )
 
+        val purposeAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            purposes
+        )
+        binding.spinnerPurpose.adapter = purposeAdapter
+        binding.spinnerPurpose.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                // Example: skip first item if it’s “Select Purpose”
+                if (position > 0) {
+
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 //        // Clients - dummy data
 //        val clients = listOf("Select Client", "Client A", "Client B", "Client C")
 //        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, clients)
@@ -59,10 +93,10 @@ class AddVisitActivity : AppCompatActivity() {
         binding.etVisitDate.setOnClickListener { openDatePicker() }
 
         // Pick From time
-        binding.etFromTime.setOnClickListener { openTimePicker(binding.etFromTime) }
+        binding.etFromTime.setOnClickListener { openTimePicker(binding.etFromTime,true) }
 
         // Pick To time
-        binding.etToTime.setOnClickListener { openTimePicker(binding.etToTime) }
+        binding.etToTime.setOnClickListener { openTimePicker(binding.etToTime,false) }
 
         // Save click
         binding.btnSaveVisit.setOnClickListener { saveVisit() }
@@ -79,21 +113,38 @@ class AddVisitActivity : AppCompatActivity() {
         }, year, month, day).show()
     }
 
-    private fun openTimePicker(target: android.widget.EditText) {
+    private fun openTimePicker(target: android.widget.EditText, ifFromTime : Boolean ) {
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
 
-        TimePickerDialog(this, { _, h, m ->
-            val timeStr = String.format("%02d:%02d:00.000Z", h, m)
+
+        TimePickerDialog(this, { _, selectedHour, selectedMinute ->
+            val amPm = if (selectedHour >= 12) "PM" else "AM"
+            val hourIn12 = if (selectedHour % 12 == 0) 12 else selectedHour % 12
+
+            val timeStr = String.format("%02d:%02d %s", hourIn12, selectedMinute, amPm)
+            target.setText(timeStr)
+            if(ifFromTime){
+                val timeStr = String.format("%02d:%02d:00.000Z", selectedHour, selectedMinute)
             val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-            target.setText("${todayDate}T$timeStr")
-        }, hour, minute, true).show()
+            selectedFromTime=("${todayDate}T$timeStr")
+            }else{
+                val timeStr = String.format("%02d:%02d:00.000Z", selectedHour, selectedMinute)
+                val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                selectedToTime=("${todayDate}T$timeStr")
+            }
+        }, hour, minute, false).show()
+//        TimePickerDialog(this, { _, h, m ->
+//            val timeStr = String.format("%02d:%02d:00.000Z", h, m)
+//            val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+//            target.setText("${todayDate}T$timeStr")
+//        }, hour, minute, false).show()
+
     }
 
     private fun saveVisit() {
         val visitDate = binding.etVisitDate.text.toString().trim()
         val clientPos = binding.spinnerClient.selectedItemPosition
-        val purpose = binding.etPurpose.text.toString().trim()
         val description = binding.etDescription.text.toString().trim()
         val fromTime = binding.etFromTime.text.toString().trim()
         val toTime = binding.etToTime.text.toString().trim()
@@ -102,10 +153,14 @@ class AddVisitActivity : AppCompatActivity() {
             showToast("Select a client")
             return
         }
-        if (purpose.isEmpty()) {
-            showToast("Enter purpose")
+        val purposePos = binding.spinnerPurpose.selectedItemPosition
+        val purpose = binding.spinnerPurpose.selectedItem.toString()
+
+        if (purposePos == 0) {
+            showToast("Select a purpose")
             return
         }
+
         if (description.isEmpty()) {
             showToast("Enter description")
             return

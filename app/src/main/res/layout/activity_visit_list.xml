@@ -8,6 +8,7 @@
 
     <!-- Header -->
     <LinearLayout
+        android:background="@color/colorPrimary"
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -23,9 +24,11 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_back"
-            android:contentDescription="Back" />
+            android:contentDescription="Back"
+            app:tint="@color/white" />
 
         <TextView
+            android:textColor="@color/white"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -37,6 +40,7 @@
 
     <!-- Tab Layout -->
     <com.google.android.material.tabs.TabLayout
+        android:visibility="gone"
         android:id="@+id/tabLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

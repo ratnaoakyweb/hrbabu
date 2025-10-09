@@ -11,8 +11,11 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +32,7 @@ import java.util.*
 import androidx.core.graphics.toColorInt
 import androidx.core.view.GravityCompat
 import com.hrbabu.tracking.activity.ActivityClientList
+import com.hrbabu.tracking.activity.ActivityProfile
 import com.hrbabu.tracking.activity.ActivityVisitList
 import com.hrbabu.tracking.adapter.TaskAdapter
 import com.hrbabu.tracking.databinding.ItemTaskBinding
@@ -39,6 +43,7 @@ import com.hrbabu.tracking.service.LocationLiveData
 import com.hrbabu.tracking.utils.ButtonState
 import com.hrbabu.tracking.utils.CameraState
 import com.hrbabu.tracking.utils.PrefUtil
+import com.hrbabu.tracking.utils.getFormattedTime
 
 class HomeActivity : BaseActivity() {
 
@@ -57,6 +62,7 @@ class HomeActivity : BaseActivity() {
     var selectedClientId = -1;
     var selectedVisitId = -1;
     var selectedVisitCheckInId = -1;
+    var selectedVisitCheckInTime = "";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -64,14 +70,23 @@ class HomeActivity : BaseActivity() {
         setButtonState(ButtonState.INACTIVE)
         homeActivityHelper = HomeActivityHelper(this)
         homeActivityHelper.init(thisActivity = this)
-        binding.navigationView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-//                R.id.nav_home -> { /* Navigate */ }
-                R.id.nav_profile -> { /* Show profile */ }
-                R.id.nav_logout -> { logout()}
-            }
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            true
+
+        val drawerLayout = binding.drawerLayout
+
+        findViewById<LinearLayout>(R.id.llUser).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, ActivityProfile::class.java))
+        }
+
+//        findViewById<TextView>(R.id.tvSettings).setOnClickListener {
+//            drawerLayout.closeDrawer(GravityCompat.START)
+//            Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show()
+//        }
+
+        findViewById<LinearLayout>(R.id.layoutLogout).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            showLogoutDialog()
         }
 
         binding.ivMenu.setOnClickListener {
@@ -97,30 +112,51 @@ class HomeActivity : BaseActivity() {
 
                return@setOnClickListener
             }
-            if(binding.switchPunchIn.isChecked){
-                startActivity(Intent(this, ActivityVisitList::class.java))
-//                if(currentState == ButtonState.CHECK_IN){
-//                    val intent = (Intent(this, ActivityClientList::class.java))
-//                    clientLauncher.launch(intent)
-//
-//                }else{
-//                        cameraCurrentState = CameraState.CHECK_OUT
-//                        captureAccurateLocation { location ->
-//                            if (location != null) {
-//                                pendingLocation = location
-//                                openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-//                            }
-//                            else {
-//                                    Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
-//                            }
-//
-//                        }
-//                }
+            if(currentState == ButtonState.CHECK_IN){
+                startVisit.launch(Intent(this, ActivityVisitList::class.java))
 
-            }else{
-                Toast.makeText(this, "You are Inactive now", Toast.LENGTH_SHORT).show()
+            }else if (currentState == ButtonState.CHECK_OUT){
+                cameraCurrentState = CameraState.CHECK_OUT
+                if(pendingLocation!=null){
+                    openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                }else{
+                    captureAccurateLocation { location ->
+                        if (location != null) {
+                            pendingLocation = location
+                            openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        }
+                        else {
+                            Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+                        }
 
+                    }
+                }
             }
+//            if(binding.switchPunchIn.isChecked){
+//                startVisit.launch(Intent(this, ActivityVisitList::class.java))
+////                startActivity(Intent(this, ActivityVisitList::class.java))
+////                if(currentState == ButtonState.CHECK_IN){
+////                    val intent = (Intent(this, ActivityClientList::class.java))
+////                    clientLauncher.launch(intent)
+////
+////                }else{
+////                        cameraCurrentState = CameraState.CHECK_OUT
+////                        captureAccurateLocation { location ->
+////                            if (location != null) {
+////                                pendingLocation = location
+////                                openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+////                            }
+////                            else {
+////                                    Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+////                            }
+////
+////                        }
+////                }
+//
+//            }else{
+//                Toast.makeText(this, "You are Inactive now", Toast.LENGTH_SHORT).show()
+//
+//            }
         }
         binding.llLocation.visibility= View.VISIBLE
         getCurrentLocation()
@@ -129,6 +165,15 @@ class HomeActivity : BaseActivity() {
         //set current date and day
 
         binding.tvDate.text = android.text.format.DateFormat.format("dd MMM, EEEE", Date())
+
+
+        setUpSideBar()
+
+    }
+
+    fun setUpSideBar(){
+        val profileResponse = getProfileResponse()
+        findViewById<TextView>(R.id.tvUserName).text = profileResponse?.res?.fullName ?: "User"
     }
 
     private val clientLauncher = registerForActivityResult(
@@ -164,33 +209,56 @@ class HomeActivity : BaseActivity() {
 
     fun setupToggel( isPunchIn : Boolean ,  isVisitCheckIn: Boolean){
         // Punch-in toggle
+        if(selectedVisitCheckInTime.isNotEmpty() && isVisitCheckIn){
+            binding.tvClockIn.text = "Check-In Time : ${getFormattedTime(selectedVisitCheckInTime)}"
+            binding.tvClockIn.visibility = View.VISIBLE
+        }else{
+
+        }
         binding.switchPunchIn.isChecked = isPunchIn
         if(isVisitCheckIn){
         setButtonState(ButtonState.CHECK_OUT)
         }
         if(!isPunchIn){
             setButtonState(ButtonState.INACTIVE)
+        }else{
+            if(isVisitCheckIn){
+                setButtonState(ButtonState.CHECK_OUT)
+            }else{
+                setButtonState(ButtonState.CHECK_IN)
+            }
         }
-        binding.switchPunchIn.setOnCheckedChangeListener { _, isChecked ->
-
-
+//        binding.switchPunchIn.apply {
+//            // Disable built-in toggle behavior
+//            setOnTouchListener { _, _ -> true } // consume touch events (prevents toggle)
+//
+//            // Add manual click listener
+//            setOnClickListener {
+//
+//                // handle click here (no change in state unless you do it by code)
+//            }
+//        }
+        binding.switchPunchIn.isClickable = false
+        binding.switchPunchIn.isFocusable = false
+        binding.llSwitch1.setOnClickListener {
+            binding.llSwitch.performClick()
+        }
+        binding.llSwitch.setOnClickListener {
             if(binding.llLocation.visibility == View.VISIBLE){
                 Toast.makeText(this, "Please wait location is being captured", Toast.LENGTH_LONG).show()
-                binding.switchPunchIn.isChecked = !isChecked
-                return@setOnCheckedChangeListener
-            }
 
+                return@setOnClickListener
+            }
             captureAccurateLocation { location ->
 
                 if(location == null){
                     Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
-                    binding.switchPunchIn.isChecked = !isChecked
+
                     return@captureAccurateLocation
                 }
             }
-            if (isChecked) {
-                binding.tvStatus.text = "Working"
-                binding.tvStatus.setTextColor("#4CAF50".toColorInt())
+
+            if(!binding.switchPunchIn.isChecked){
 
                 captureAccurateLocation { location ->
                     if (location != null) {
@@ -198,8 +266,6 @@ class HomeActivity : BaseActivity() {
                         cameraCurrentState = CameraState.PUNCH_IN
                         openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
                     } else {
-//                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
-//                        binding.switchPunchIn.isChecked = false
 
                         pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
                             latitude = 0.0
@@ -209,18 +275,13 @@ class HomeActivity : BaseActivity() {
 
                     }
                 }
-                startLocationService()
-            } else {
-                binding.tvStatus.text = "Not Working"
-                binding.tvStatus.setTextColor(Color.parseColor("#FF5252"))
+            }else{
                 cameraCurrentState = CameraState.PUNCH_OUT
                 captureAccurateLocation { location ->
                     if (location != null) {
                         pendingLocation = location
                         openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
                     } else {
-//                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
-//                        binding.switchPunchIn.isChecked = false
 
                         pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
                             latitude = 0.0
@@ -229,15 +290,65 @@ class HomeActivity : BaseActivity() {
                         openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
 
                     }
-                    stopLocationService()
+
                 }
             }
+
+
+        }
+        binding.switchPunchIn.setOnCheckedChangeListener { _, isChecked ->
+
+
+
+
+
+//            if (isChecked) {
+//                binding.tvStatus.text = "Working"
+//                binding.tvStatus.setTextColor("#4CAF50".toColorInt())
+//
+//                captureAccurateLocation { location ->
+//                    if (location != null) {
+//                        pendingLocation = location
+//                        cameraCurrentState = CameraState.PUNCH_IN
+//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//                    } else {
+//
+//                        pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
+//                            latitude = 0.0
+//                            longitude = 0.0
+//                        }
+//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//
+//                    }
+//                }
+//                startLocationService()
+//            } else {
+//                binding.tvStatus.text = "Not Working"
+//                binding.tvStatus.setTextColor(Color.parseColor("#FF5252"))
+//                cameraCurrentState = CameraState.PUNCH_OUT
+//                captureAccurateLocation { location ->
+//                    if (location != null) {
+//                        pendingLocation = location
+//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//                    } else {
+//
+//                        pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
+//                            latitude = 0.0
+//                            longitude = 0.0
+//                        }
+//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//
+//                    }
+//                    stopLocationService()
+//                }
+//            }
         }
     }
 
     fun setHistoryData(response: HistoryResponse?){
         if(response!=null){
             if((response.rc?.size ?: 0) > 0){
+                binding.clNoData.visibility=View.GONE
                 if((response.rc?.get(0)?.activityType ?: "") == "Punch In"){
                     binding.switchPunchIn.isChecked=true
                     startLocationService()
@@ -247,6 +358,9 @@ class HomeActivity : BaseActivity() {
                 }
 
                 binding.recyclerTasks.adapter = TaskAdapter(response.rc as List<RcItem>)
+            }else{
+                binding.clNoData.visibility=View.VISIBLE
+
             }
         }
     }
@@ -333,9 +447,10 @@ class HomeActivity : BaseActivity() {
      * GPS capture with system dialog if disabled
      */
     private fun captureAccurateLocation(callback: (android.location.Location?) -> Unit) {
-        LocationLiveData.getLastLocation()?.let {
-            callback(it)
-        }
+//        LocationLiveData.getLastLocation()?.let {
+//            callback(it)
+//        }
+        callback(pendingLocation)
 //            val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
 //            binding.tvLocation.text = "Lat: $lat, Lng: $lng at $time"
 //        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -406,21 +521,21 @@ class HomeActivity : BaseActivity() {
                     val address = addresses?.firstOrNull()?.getAddressLine(0) ?: ""
 
                     // Save to DB
-                    val punchEvent = PunchEvent(
-                        latitude = pendingLocation!!.latitude,
-                        longitude = pendingLocation!!.longitude,
-                        address = address,
-                        imagePath = imagePath,
-                        eventType = "PunchIn",
-                        createdAt = System.currentTimeMillis(),
-                        isSynced = false
-                    )
+//                    val punchEvent = PunchEvent(
+//                        latitude = pendingLocation!!.latitude,
+//                        longitude = pendingLocation!!.longitude,
+//                        address = address,
+//                        imagePath = imagePath,
+//                        eventType = "PunchIn",
+//                        createdAt = System.currentTimeMillis(),
+//                        isSynced = false
+//                    )
 
-                    lifecycleScope.launch {
-                        AppDatabase.getDatabase(this@HomeActivity).punchEventDao()
-                            .insert(punchEvent)
-                        Toast.makeText(this@HomeActivity, "Punch-In saved locally", Toast.LENGTH_SHORT).show()
-                    }
+//                    lifecycleScope.launch {
+//                        AppDatabase.getDatabase(this@HomeActivity).punchEventDao()
+//                            .insert(punchEvent)
+//                        Toast.makeText(this@HomeActivity, "Punch-In saved locally", Toast.LENGTH_SHORT).show()
+//                    }
                     if(cameraCurrentState == CameraState.PUNCH_IN){
                         homeActivityHelper.hitApi(HomeActivityHelper.PunchIn)
                     }else if (cameraCurrentState == CameraState.PUNCH_OUT){
@@ -434,8 +549,8 @@ class HomeActivity : BaseActivity() {
 
                 }
             } else {
-                binding.switchPunchIn.isChecked =  !binding.switchPunchIn.isChecked
-                //Toast.makeText(this, "Camera cancelled", Toast.LENGTH_SHORT).show()
+//                binding.switchPunchIn.isChecked =  !binding.switchPunchIn.isChecked
+                Toast.makeText(this, "Camera cancelled", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -468,6 +583,22 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    fun showLogoutDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to log out?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                dialog.dismiss()
+                logout()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+
     fun logout() {
         // Clear user session data (e.g., SharedPreferences)
         PrefUtil.Init(this).clearALl()
@@ -477,6 +608,19 @@ class HomeActivity : BaseActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+
+    fun setToggelState(isChecked: Boolean){
+        if(isChecked){
+                        binding.tvStatus.text = "Working"
+                binding.tvStatus.setTextColor("#4CAF50".toColorInt())
+                binding.switchPunchIn.isChecked=true
+        }else{
+                binding.tvStatus.text = "Not Working"
+                binding.tvStatus.setTextColor(Color.parseColor("#FF5252"))
+                binding.switchPunchIn.isChecked=false
+        }
     }
 
     fun setButtonState(state: ButtonState) {
@@ -500,6 +644,61 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    // Define at the top of your Activity (as a property)
+    private val startVisit = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            val clientId = data?.getIntExtra("client_id",-1)
+            val visitId = data?.getIntExtra("visit_id",-1)
+
+            //Toast.makeText(this, "Visit Added: $visitName", Toast.LENGTH_SHORT).show()
+            if(currentState == ButtonState.CHECK_IN){
+//                    val intent = (Intent(this, ActivityClientList::class.java))
+//                    clientLauncher.launch(intent)
+                selectedClientId = clientId?.toInt() ?: -1
+                selectedVisitId = visitId?.toInt() ?: -1
+                if(selectedClientId != -1 && selectedVisitId!= -1){
+                    cameraCurrentState = CameraState.CHECK_IN
+                    if(pendingLocation!=null){
+                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                    }
+//                    captureAccurateLocation { location ->
+//                        if (location != null) {
+//                            pendingLocation = location
+//                            openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//                        }
+//                        else {
+////                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+////                        binding.switchPunchIn.isChecked = false
+//
+////                        pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
+////                            latitude = 0.0
+////                            longitude = 0.0
+////                        }
+////                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//
+//                        }
+//
+//                    }
+                }
+
+                }else{
+                        cameraCurrentState = CameraState.CHECK_OUT
+                        captureAccurateLocation { location ->
+                            if (location != null) {
+                                pendingLocation = location
+                                openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                            }
+                            else {
+                                    Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+                            }
+
+                        }
+                }
+        }
+    }
 
 }
 

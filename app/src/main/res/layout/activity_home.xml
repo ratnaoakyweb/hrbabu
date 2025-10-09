@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
     <!-- Main Content -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#F9F9F9">
-
+<!--        <LinearLayout-->
+<!--            android:background="@color/colorPrimaryLight"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="150dp"/>-->
         <!-- Top Bar -->
         <LinearLayout
             android:id="@+id/topBar"
@@ -26,9 +32,10 @@
 
             <!-- Menu icon to open drawer -->
             <ImageView
+                android:padding="10dp"
                 android:id="@+id/ivMenu"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_menu"
                 android:contentDescription="Menu"
                 android:clickable="true"
@@ -41,20 +48,26 @@
                 android:layout_weight="1" />
 
             <!-- Punch In Toggle -->
+            <LinearLayout
+                android:id="@+id/llSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchPunchIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="Punch-In"
+                android:textColor="#000"
                 app:thumbIconTint="@color/colorPrimary" />
-
+            </LinearLayout>
             <Space
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
             <ImageView
+                android:visibility="invisible"
                 android:id="@+id/ivSettings"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
@@ -67,7 +80,7 @@
             android:id="@+id/cardTimer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintTop_toBottomOf="@id/topBar">
@@ -124,6 +137,7 @@
 
                 <!-- Working On -->
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tvWorkingOn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -171,10 +185,11 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="--\nClock In"
+                        android:text=""
                         android:gravity="center"/>
 
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/tvClockOut"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -216,6 +231,69 @@
             app:layout_constraintTop_toBottomOf="@id/tvRecentTasks"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clNoData"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tvRecentTasks"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp"
+                android:background="@drawable/bg_no_data_card"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+
+
+                <!-- Main Message -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Data Available"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="6dp" />
+
+                <!-- Sub Message -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Punch In to start your day"
+                    android:textColor="#666"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Punch In Switch -->
+                <LinearLayout
+                    android:id="@+id/llSwitch1"
+                    android:clickable="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchPunchIn1"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Click to Punch In"
+                    android:textColor="#000"
+                     />
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/llLocation"
@@ -240,16 +318,24 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </FrameLayout>
     <!-- Left Drawer Content -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="match_parent"
+<!--    <com.google.android.material.navigation.NavigationView-->
+<!--        android:id="@+id/navigationView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:fitsSystemWindows="false"-->
+<!--        android:layout_gravity="start"-->
+<!--        android:background="@android:color/white"-->
+<!--        app:headerLayout="@layout/nav_header"-->
+<!--        app:menu="@menu/drawer_menu" />-->
+
+    <include
+
+        android:layout_width="280dp"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="false"
         android:layout_gravity="start"
-        android:background="@android:color/white"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu" />
+        android:id="@+id/navigation_view"
+        layout="@layout/custom_navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

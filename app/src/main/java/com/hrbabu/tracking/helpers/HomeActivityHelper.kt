@@ -89,11 +89,11 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     CheckOutFile = null,
                     Flag = "I".toRequestBody(textPlain),  // "I" for Punch In, "O" for Punch Out
                     DeviceType = "Android".toRequestBody(textPlain),
-                    CheckInLat = "0".toRequestBody(textPlain),
-                    CheckOutTime = "".toRequestBody(textPlain),
-                    CheckInLng = "0".toRequestBody(textPlain),
-                    CheckOutLat = "".toRequestBody(textPlain),
+                    CheckInLat = homeActivity.pendingLocation?.latitude.toString().toRequestBody(textPlain),
+                    CheckInLng = homeActivity.pendingLocation?.longitude.toString().toRequestBody(textPlain),
                     CheckInTime = getCurrentUtcTime().toRequestBody(textPlain),
+                    CheckOutTime = "".toRequestBody(textPlain),
+                    CheckOutLat = "".toRequestBody(textPlain),
                     CheckOutLng = "".toRequestBody(textPlain)
                 )
 
@@ -102,9 +102,9 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         override fun onSuccess(t: PunchinPunchoutResponse?) {
                             hideProgressDialog()
                             homeActivity.setButtonState(ButtonState.CHECK_IN)
+                            homeActivity.setToggelState(true)
                             hitApi(GetHistory)
                             Toast.makeText(homeActivity, t?.msgkey ?: "Success", Toast.LENGTH_SHORT).show()
-                            Log.d("PunchInRes", t.toString())
                         }
 
                         override fun onError(t: String?) {
@@ -154,6 +154,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     override fun onSuccess(t: PunchinPunchoutResponse?) {
                         hideProgressDialog()
                         homeActivity.setButtonState(ButtonState.INACTIVE)
+                        homeActivity.setToggelState(false)
                         hitApi(GetHistory)
                         Toast.makeText(homeActivity, t?.msgkey ?: "Success", Toast.LENGTH_SHORT).show()
                         Log.d("PunchInRes", t.toString())
@@ -197,7 +198,9 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 CheckInLng = homeActivity.pendingLocation!!.longitude.toString().toRequestBody(textPlain),
                 CheckOutTime = "".toRequestBody(textPlain),
                 CheckOutLat = "".toRequestBody(textPlain),
-                CheckOutLng = "".toRequestBody(textPlain)
+                CheckOutLng = "".toRequestBody(textPlain),
+                VisitId = homeActivity.selectedVisitId.toString().toRequestBody(textPlain),
+                VisitCheckInId="".toRequestBody(textPlain)
             )
 
             disposables.add(
@@ -207,6 +210,8 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         Toast.makeText(homeActivity, t?.msgkey ?: "Success", Toast.LENGTH_SHORT).show()
                         Log.d("PunchInRes", t.toString())
                         homeActivity.setButtonState(ButtonState.CHECK_OUT)
+                        homeActivity.selectedVisitCheckInId=t?.res?.VisitCheckInId ?: -1
+                        homeActivity.selectedVisitCheckInTime=t?.res?.activityTime ?: ""
                         hitApi(GetHistory)
                     }
 
@@ -249,7 +254,8 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 CheckOutLat = homeActivity.pendingLocation!!.latitude.toString().toRequestBody(textPlain),
                 CheckOutLng = homeActivity.pendingLocation!!.longitude.toString().toRequestBody(textPlain),
                 CheckOutTime =getCurrentUtcTime().toRequestBody(textPlain),
-
+                VisitId = homeActivity.selectedVisitId.toString().toRequestBody(textPlain),
+                VisitCheckInId= homeActivity.selectedVisitCheckInId.toString().toRequestBody(textPlain),
             )
 
             disposables.add(
@@ -305,6 +311,8 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                                     homeActivity.selectedClientId=item.clientId ?: -1
                                     homeActivity.selectedVisitId=item.visitId ?: -1
                                     homeActivity.selectedVisitCheckInId=item.visitCheckInId ?: -1
+                                    homeActivity.selectedVisitCheckInTime = item.activityTime ?: ""
+
                                 }
                             }
                         }

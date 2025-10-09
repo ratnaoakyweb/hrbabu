@@ -5,13 +5,13 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- Needed for Android 10 (Q) and above to get background location -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />-->
+<!--    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />-->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />-->
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />-->
 
     <application
         android:allowBackup="true"
@@ -47,6 +47,8 @@
         <activity android:name=".activity.ActivityVisitList"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.AddVisitActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ActivityProfile"
             android:screenOrientation="portrait"/>
         <service
             android:name=".service.LocationService"

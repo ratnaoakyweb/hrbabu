@@ -26,5 +26,11 @@ data class Res(
 	val id: Any? = null,
 
 	@field:SerializedName("StatusCode")
-	val statusCode: Int? = null
+	val statusCode: Int? = null,
+
+	@field:SerializedName("VisitCheckInId")
+	val VisitCheckInId: Int? = null,
+
+	@field:SerializedName("ActivityTime")
+	val activityTime: String? = null
 )

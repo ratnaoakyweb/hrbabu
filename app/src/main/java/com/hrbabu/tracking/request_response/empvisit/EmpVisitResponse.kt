@@ -68,5 +68,14 @@ data class VisitsItem(
 	val employeeId: Int? = null,
 
 	@field:SerializedName("FromTime")
-	val fromTime: String? = null
+	val fromTime: String? = null,
+
+	@field:SerializedName("Status")
+	val status: Int? = null,
+
+	@field:SerializedName("StatusText")
+	val StatusText: String? = null,
+
+	@field:SerializedName("Address")
+	val address: String? = null,
 )

@@ -77,10 +77,10 @@ class ActivityAddVisitHelper(val activityAddVisit: AddVisitActivity) : BaseHelpe
                             flag = "I",
                             visitDate = activityAddVisit.binding.etVisitDate.text.toString().trim(),
                             clientId = activityAddVisit.clientId.get(activityAddVisit.binding.spinnerClient.selectedItemPosition).toInt(),
-                            purpose = activityAddVisit.binding.etPurpose.text.toString().trim(),
+                            purpose = activityAddVisit.binding.spinnerPurpose.selectedItem.toString(),
                             description = activityAddVisit.binding.etDescription.text.toString().trim(),
-                            fromTime = activityAddVisit.binding.etFromTime.text.toString().trim(),
-                            toTime = activityAddVisit.binding.etToTime.text.toString().trim(),
+                            fromTime = activityAddVisit.selectedFromTime.toString().trim(),
+                            toTime = activityAddVisit.selectedToTime.toString().trim(),
                             isPhoto = true,
                             isActive = true
                         )) // no token here if your getApiClientAuth already attaches it

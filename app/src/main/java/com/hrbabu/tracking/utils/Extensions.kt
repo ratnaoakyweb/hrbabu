@@ -9,6 +9,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -78,4 +80,37 @@ fun getTodayUtcEndTime(): String {
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
     sdf.timeZone = TimeZone.getTimeZone("UTC")
     return sdf.format(calendar.time)
+}
+
+
+fun getFormattedTime(input : String): String{
+    var formattedTime = ""
+    try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC") // or your desired time zone
+
+        val date = inputFormat.parse(input)
+
+// Step 2: Format the Date object into 12-hour time with AM/PM
+        val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        formattedTime = outputFormat.format(date)
+    }catch (e: Exception){
+
+        try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC") // or your desired time zone
+
+            val date = inputFormat.parse(input)
+
+// Step 2: Format the Date object into 12-hour time with AM/PM
+            val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            formattedTime = outputFormat.format(date)
+        }catch (e: Exception){
+
+
+
+        }
+
+    }
+    return formattedTime
 }

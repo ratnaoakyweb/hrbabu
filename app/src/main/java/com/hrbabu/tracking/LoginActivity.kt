@@ -45,7 +45,7 @@ class LoginActivity : BaseActivity() {
         initHelper()
         createNotificationChannel()
 
-        binding.tvForgotPassword.visibility = View.GONE
+//        binding.tvForgotPassword.visibility = View.GONE
 
         // Main login click
         binding.btnLogin.setOnClickListener {

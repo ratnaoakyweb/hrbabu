@@ -13,6 +13,7 @@ import com.hrbabu.tracking.request_response.getclient.GetClientResponse
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.login.LoginRequest
 import com.hrbabu.tracking.request_response.login.LoginResponse
+import com.hrbabu.tracking.request_response.profile.ProfileResponse
 import com.hrbabu.tracking.request_response.punchinpunchout.PunchinPunchoutResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -38,6 +39,9 @@ interface ApiList {
 
     @GET("/api/Employee/GetEmployeeActivityToggle")
     fun getEmployeeActivityToggle(): Observable<ResponseGetEmployeeActivityToggle>
+
+    @GET("/api/Employee/GetEmployeeProfile")
+    fun getEmployeeProfile(): Observable<ProfileResponse>
 
     @POST("/api/Employee/GetEmployeeVisits")
     fun getEmployeeVisits(@Body request: EmpVisitRequest): Observable<EmpVisitResponse>
@@ -74,7 +78,7 @@ interface ApiList {
         @Part CheckOutFile: MultipartBody.Part?,
         @Part("Flag") Flag: RequestBody,
         @Part("ClientId") ClientId: RequestBody,
-//        @Part("VisitId") VisitId: RequestBody,
+        @Part("VisitId") VisitId: RequestBody,
         @Part("CheckInTime") CheckInTime: RequestBody?,
         @Part("CheckInLat") CheckInLat: RequestBody,
         @Part("CheckInLng") CheckInLng: RequestBody?,
@@ -82,6 +86,7 @@ interface ApiList {
         @Part("CheckOutTime") CheckOutTime: RequestBody?,
         @Part("CheckOutLat") CheckOutLat: RequestBody?,
         @Part("CheckOutLng") CheckOutLng: RequestBody?,
+        @Part("VisitCheckInId") VisitCheckInId: RequestBody?,
 //        @Part("CheckOutPhotoUrl") CheckOutPhotoUrl: RequestBody?,
     ): Observable<PunchinPunchoutResponse>
 
