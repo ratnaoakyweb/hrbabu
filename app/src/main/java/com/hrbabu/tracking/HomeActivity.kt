@@ -390,7 +390,7 @@ class HomeActivity : BaseActivity() {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY, 2000L
         )
-            .setWaitForAccurateLocation(true)
+            .setWaitForAccurateLocation(false)
             .setMaxUpdates(1)
             .build()
 
@@ -407,7 +407,8 @@ class HomeActivity : BaseActivity() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-
+               // Toast.makeText(this, "Location permission not granted", Toast.LENGTH_LONG).show()
+                askFormLocationPermission()
                 return@addOnSuccessListener
             }
 
@@ -697,6 +698,53 @@ class HomeActivity : BaseActivity() {
 
                         }
                 }
+        }
+    }
+
+    fun askFormLocationPermission(){
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Request permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1001
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Permission Result
+    // -------------------------------------------------------------------------
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            1001 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                    getCurrentLocation()
+                } else {
+                    // Permission denied show dialog
+
+                    AlertDialog.Builder(this)
+                        .setTitle("Permission Required")
+                        .setMessage("Location permission is required for this app to function. Please grant the permission in app settings.")
+                        .setPositiveButton("OK") { dialog, _ ->
+                            dialog.dismiss()
+                            getCurrentLocation()
+                        }
+                        .show()
+
+                }
+            }
         }
     }
 
