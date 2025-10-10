@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.hrbabu.tracking.activity.ApplyLeaveActivity
 import com.hrbabu.tracking.databinding.FragmentApplyLeaveBinding
+import com.hrbabu.tracking.helpers.ApplyLeaveHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,7 +29,6 @@ class ApplyLeaveFragment : Fragment() {
     ): View {
         _binding = FragmentApplyLeaveBinding.inflate(inflater, container, false)
 
-        setupLeaveTypeDropdown()
         setupDatePickers()
 
         binding.incHeader.ivClose.setOnClickListener {
@@ -40,35 +42,54 @@ class ApplyLeaveFragment : Fragment() {
         return binding.root
     }
 
+    fun setUpData(res: List<com.hrbabu.tracking.request_response.alldropdown.RcItem?>?) {
+        val leaveTypes = res?.mapNotNull { it?.text } ?: listOf("Leave")
+        val leaveId = res?.mapNotNull { it?.value } ?: listOf(0)
+        (activity as ApplyLeaveActivity).leaveId = leaveId.firstOrNull() ?: 0
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, leaveTypes)
+        binding.spinnerLeaveType.adapter = adapter
+
+        binding.spinnerLeaveType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                (activity as ApplyLeaveActivity).leaveId = leaveId[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Optional: handle case when nothing is selected
+            }
+        }
+    }
+
     private fun validateAndApplyLeave() {
         val reason = binding.etReason.text.toString().trim()
 
         when {
             fromDate == null -> {
                 showToast("Please select From Date")
+                return
             }
             toDate == null -> {
                 showToast("Please select To Date")
+                return
             }
             reason.isEmpty() -> {
                 showToast("Please enter reason for leave")
-            }
-            else -> {
-                showToast("Leave Applied Successfully!")
+                return
             }
         }
+
+        // If all validations pass
+        (activity as ApplyLeaveActivity).reason = reason
+        (activity as ApplyLeaveActivity).helper.hitApi(ApplyLeaveHelper.SAVE_EMP_LEAVE)
     }
+
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 
-    private fun setupLeaveTypeDropdown() {
-        val leaveTypes = listOf("Casual Leave", "Sick Leave", "Earned Leave")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, leaveTypes)
-        binding.spinnerLeaveType.setAdapter(adapter)
-    }
+
 
     private fun setupDatePickers() {
         binding.tvFromDate.setOnClickListener {
@@ -95,6 +116,12 @@ class ApplyLeaveFragment : Fragment() {
                 }
 
                 if (isFromDate) {
+                    // Convert to UTC for server
+                    val utcFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    utcFormat.timeZone = TimeZone.getTimeZone("UTC")
+                    val utcDateString = utcFormat.format(selectedCal.time)
+                    (activity as ApplyLeaveActivity).startDate = utcDateString
+
                     fromDate = selectedCal
                     binding.tvFromDate.text = dateFormat.format(selectedCal.time)
                     // Reset toDate if invalid
@@ -103,8 +130,14 @@ class ApplyLeaveFragment : Fragment() {
                         binding.tvToDate.text = "Select Date"
                     }
                 } else {
+                    // Convert to UTC for server
+                    val utcFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    utcFormat.timeZone = TimeZone.getTimeZone("UTC")
+                    val utcDateString = utcFormat.format(selectedCal.time)
+
                     toDate = selectedCal
                     binding.tvToDate.text = dateFormat.format(selectedCal.time)
+                    (activity as ApplyLeaveActivity).endDate = utcDateString
                 }
 
                 updateLeaveCount()
@@ -128,6 +161,7 @@ class ApplyLeaveFragment : Fragment() {
             val diff = toDate!!.timeInMillis - fromDate!!.timeInMillis
             val days = (diff / (1000 * 60 * 60 * 24)) + 1
             binding.tvLeaveCount.text = "$days Day${if (days > 1) "s" else ""}"
+            (activity as ApplyLeaveActivity).totalDays = days.toInt()
         } else {
             binding.tvLeaveCount.text = "0 Days"
         }

@@ -90,7 +90,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/write_feedback" />
+                android:src="@drawable/ic_feedback" />
 
             <TextView
                 android:id="@+id/tvFeedback"
@@ -98,6 +98,88 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:text="Send Feedback"
+                android:textSize="15sp"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <!-- Leave -->
+        <LinearLayout
+            android:id="@+id/layoutLeave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_leave" />
+
+            <TextView
+                android:id="@+id/tvLeave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Leave"
+                android:textSize="15sp"
+                android:textColor="#000" />
+        </LinearLayout>
+
+
+        <!-- Client -->
+        <LinearLayout
+            android:id="@+id/layoutClient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_add_client" />
+
+            <TextView
+                android:id="@+id/tvClient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Client"
+                android:textSize="15sp"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <!-- Visit -->
+        <LinearLayout
+            android:id="@+id/layoutVisit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_add_visit" />
+
+            <TextView
+                android:id="@+id/tvVisit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Visit"
                 android:textSize="15sp"
                 android:textColor="#000" />
         </LinearLayout>
@@ -117,7 +199,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/info" />
+                android:src="@drawable/ic_about" />
 
             <TextView
                 android:id="@+id/tvAbout"

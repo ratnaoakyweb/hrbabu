@@ -3,14 +3,17 @@ package com.hrbabu.tracking.activity
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.hrbabu.tracking.databinding.ActivityAddVisitBinding
 import com.hrbabu.tracking.helpers.ActivityAddVisitHelper
+import com.hrbabu.tracking.helpers.ActivityVisitListHelper
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,6 +37,8 @@ class AddVisitActivity : AppCompatActivity() {
         helper = ActivityAddVisitHelper(this)
         helper.init(this)
         helper.hitApi(ActivityAddVisitHelper.GET_CLIENT_LIST)
+
+
     }
 
     fun setUpClients(clients: List<com.hrbabu.tracking.request_response.getclient.ClientsItem?>?) {
@@ -100,6 +105,19 @@ class AddVisitActivity : AppCompatActivity() {
 
         // Save click
         binding.btnSaveVisit.setOnClickListener { saveVisit() }
+
+        binding.btnSaveClient.setOnClickListener {
+            launcher.launch(Intent(this, AddNewClientActivity::class.java))
+
+        }
+    }
+
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            helper.hitApi(ActivityAddVisitHelper.GET_CLIENT_LIST)
+        }
     }
 
     private fun openDatePicker() {

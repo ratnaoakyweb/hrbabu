@@ -42,13 +42,15 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.AddNewClientActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ApplyLeaveActivity"
+        <activity android:name=".activity.ApplyLeaveActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.ActivityVisitList"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.AddVisitActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.ActivityProfile"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ActivityLeaveList"
             android:screenOrientation="portrait"/>
         <service
             android:name=".service.LocationService"

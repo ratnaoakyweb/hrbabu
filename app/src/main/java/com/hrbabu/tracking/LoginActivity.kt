@@ -69,6 +69,12 @@ class LoginActivity : BaseActivity() {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
         }
+
+
+        val versionName = getAppVersionName(this)
+
+        binding.tvAppVersion.text = "App Version: $versionName"
+
     }
 
     // -------------------------------------------------------------------------

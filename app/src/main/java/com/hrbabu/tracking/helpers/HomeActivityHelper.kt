@@ -55,6 +55,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     override fun onError(t: String?) {
                         hideProgressDialog()
                         Toast.makeText(homeActivity.applicationContext,t?:"", Toast.LENGTH_SHORT).show()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(GetHistory)
+                            }
+                        })
                     }
 
                     override fun onTimeout() {
@@ -69,6 +75,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
 
                     override fun onUnknownError() {
                         hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(GetHistory)
+                            }
+                        })
                         //Toast.makeText(fragment.requireContext(),"onUnknownError", Toast.LENGTH_SHORT).show()
                     }
 
@@ -110,6 +122,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         override fun onError(t: String?) {
                             hideProgressDialog()
                             Toast.makeText(homeActivity, t ?: "Error", Toast.LENGTH_SHORT).show()
+                            showRetryDialog(object : OnRerty {
+                                override fun onRetry() {
+                                    dismissDialog()
+                                    hitApi(PunchIn)
+                                }
+                            })
                         }
 
                         override fun onTimeout() {
@@ -123,7 +141,14 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                             })
                         }
 
-                        override fun onUnknownError() { hideProgressDialog() }
+                        override fun onUnknownError() { hideProgressDialog()
+                            showRetryDialog(object : OnRerty {
+                                override fun onRetry() {
+                                    dismissDialog()
+                                    hitApi(PunchIn)
+                                }
+                            })
+                        }
                         override fun onLogout() { hideProgressDialog() }
                     })
                 )
@@ -163,6 +188,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     override fun onError(t: String?) {
                         hideProgressDialog()
                         Toast.makeText(homeActivity, t ?: "Error", Toast.LENGTH_SHORT).show()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(PunchOut)
+                            }
+                        })
                     }
 
                     override fun onTimeout() {
@@ -176,7 +207,13 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         })
                     }
 
-                    override fun onUnknownError() { hideProgressDialog() }
+                    override fun onUnknownError() { hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(PunchOut)
+                            }
+                        })}
                     override fun onLogout() { hideProgressDialog() }
                 }))
         }
@@ -218,6 +255,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     override fun onError(t: String?) {
                         hideProgressDialog()
                         Toast.makeText(homeActivity, t ?: "Error", Toast.LENGTH_SHORT).show()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(CheckIn)
+                            }
+                        })
                     }
 
                     override fun onTimeout() {
@@ -231,7 +274,13 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         })
                     }
 
-                    override fun onUnknownError() { hideProgressDialog() }
+                    override fun onUnknownError() { hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(CheckIn)
+                            }
+                        })}
                     override fun onLogout() { hideProgressDialog() }
                 }))
         }
@@ -273,6 +322,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     override fun onError(t: String?) {
                         hideProgressDialog()
                         Toast.makeText(homeActivity, t ?: "Error", Toast.LENGTH_SHORT).show()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(CheckOut)
+                            }
+                        })
                     }
 
                     override fun onTimeout() {
@@ -286,7 +341,13 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         })
                     }
 
-                    override fun onUnknownError() { hideProgressDialog() }
+                    override fun onUnknownError() { hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(CheckOut)
+                            }
+                        })}
                     override fun onLogout() { hideProgressDialog() }
                 }))
         }
@@ -329,6 +390,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     override fun onError(t: String?) {
                         hideProgressDialog()
                         Toast.makeText(homeActivity.applicationContext,t?:"", Toast.LENGTH_SHORT).show()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(GetToggel)
+                            }
+                        })
                     }
 
                     override fun onTimeout() {
@@ -343,6 +410,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
 
                     override fun onUnknownError() {
                         hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(GetToggel)
+                            }
+                        })
                         //Toast.makeText(fragment.requireContext(),"onUnknownError", Toast.LENGTH_SHORT).show()
                     }
 

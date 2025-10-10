@@ -1,6 +1,8 @@
 package com.hrbabu.tracking
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
@@ -74,7 +76,15 @@ open class BaseActivity : AppCompatActivity()  {
         val profileJson = PrefUtil.Init(this).getString(PrefKeys.profileResponse)
         return gson.fromJson(profileJson, ProfileResponse::class.java)
     }
-
+    fun getAppVersionName(context: Context): String? {
+        return try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            packageInfo.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            "Unknown"
+        }
+    }
 
 
 

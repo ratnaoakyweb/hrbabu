@@ -32,8 +32,11 @@ import java.util.*
 import androidx.core.graphics.toColorInt
 import androidx.core.view.GravityCompat
 import com.hrbabu.tracking.activity.ActivityClientList
+import com.hrbabu.tracking.activity.ActivityLeaveList
 import com.hrbabu.tracking.activity.ActivityProfile
 import com.hrbabu.tracking.activity.ActivityVisitList
+import com.hrbabu.tracking.activity.AddVisitActivity
+import com.hrbabu.tracking.activity.ApplyLeaveActivity
 import com.hrbabu.tracking.adapter.TaskAdapter
 import com.hrbabu.tracking.databinding.ItemTaskBinding
 import com.hrbabu.tracking.helpers.HomeActivityHelper
@@ -83,6 +86,24 @@ class HomeActivity : BaseActivity() {
 //            Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show()
 //        }
 
+
+        findViewById<LinearLayout>(R.id.layoutLeave).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            startActivity(Intent(this, ActivityLeaveList::class.java))
+        }
+        findViewById<LinearLayout>(R.id.layoutClient).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            startActivity(Intent(this, ActivityClientList::class.java))
+        }
+        findViewById<LinearLayout>(R.id.layoutVisit).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            startActivity(Intent(this, AddVisitActivity::class.java))
+        }
+
+        binding.navigationView.tvVersion.text = "V: ${getAppVersionName(this)}"
         findViewById<LinearLayout>(R.id.layoutLogout).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
 
@@ -387,14 +408,15 @@ class HomeActivity : BaseActivity() {
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 //
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY, 2000L
-        )
-            .setWaitForAccurateLocation(false)
-            .setMaxUpdates(1)
-            .build()
+         val locationRequest = LocationRequest.Builder(
+             Priority.PRIORITY_HIGH_ACCURACY, 5000L // 5 seconds, reasonable for most apps
+         )
+             .setWaitForAccurateLocation(false)      // accept approximate first
+             .setMinUpdateIntervalMillis(2000L)     // minimum 2 seconds between updates
+             .build()
 
-        val builder = LocationSettingsRequest.Builder()
+
+         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
             .setAlwaysShow(true)
 
@@ -418,7 +440,8 @@ class HomeActivity : BaseActivity() {
                     override fun onLocationResult(result: LocationResult) {
 //                        fusedLocationClient.removeLocationUpdates(this)
                         binding.llLocation.visibility= View.GONE
-                        Toast.makeText(this@HomeActivity, "Location captured", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this@HomeActivity, "Location captured", Toast.LENGTH_SHORT).show()
+                        LocationLiveData.updateLocation(result.lastLocation!!)
 //                        callback(result.lastLocation)
                         pendingLocation=result.lastLocation
                     }

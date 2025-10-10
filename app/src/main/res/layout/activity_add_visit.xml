@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:clipToPadding="false"
-    android:background="#F7F7F7"
+    android:background="@color/colorPrimaryDark"
     tools:context=".activity.AddVisitActivity">
 
     <!-- Header -->
@@ -42,6 +42,14 @@
             android:textSize="18sp" />
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout"
+        app:layout_constraintBottom_toTopOf="@+id/btnSaveVisit"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        android:orientation="vertical">
     <!-- Visit Date -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_marginHorizontal="10dp"
@@ -50,7 +58,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Visit Date"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -151,7 +159,7 @@
             android:focusable="false"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Save Button -->
     <Button
         android:id="@+id/btnSaveVisit"
@@ -162,7 +170,22 @@
         android:text="Save Visit"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSaveClient"
+        app:layout_constraintHorizontal_weight="1"/>
+
+    <Button
+        android:id="@+id/btnSaveClient"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/black"
+        android:text="Add Client"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnSaveVisit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_weight="1"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="#F8F9FA"
+    android:background="@color/colorPrimaryDark"
     tools:context=".activity.ActivityClientList">
 
     <!-- Header Bar -->
@@ -30,7 +30,7 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_back"
             android:contentDescription="Back"
-            android:tint="@android:color/white" />
+            app:tint="@android:color/white" />
 
         <TextView
             android:id="@+id/tvHeaderTitle"
@@ -45,8 +45,10 @@
 
     <!-- Content Section -->
     <LinearLayout
+        android:background="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/llTop"
         android:layout_width="match_parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddNewClient"
         android:layout_height="0dp"
         android:orientation="vertical"
         android:padding="16dp">

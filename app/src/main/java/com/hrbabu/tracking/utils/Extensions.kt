@@ -114,3 +114,22 @@ fun getFormattedTime(input : String): String{
     }
     return formattedTime
 }
+
+// Get Fromated Date
+
+fun getFormattedDate(input : String): String {
+    var formattedDate = ""
+    try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC") // or your desired time zone
+
+        val date = inputFormat.parse(input)
+        val outputFormat = SimpleDateFormat("dd , MMM EEEE", Locale.getDefault())
+        formattedDate = outputFormat.format(date)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return formattedDate
+}
+
+

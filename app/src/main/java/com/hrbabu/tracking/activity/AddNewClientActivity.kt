@@ -31,6 +31,10 @@ class AddNewClientActivity : BaseActivity() {
             setContentView(binding.root)
 
             binding.toolbar.title = "Add New Client"
+            binding.toolbar.setTitleTextColor(resources.getColor(com.hrbabu.tracking.R.color.white))
+            binding.toolbar.navigationIcon?.setTint(resources.getColor(com.hrbabu.tracking.R.color.white))
+            // back click
+            binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
 
             activityAddClientHelper = ActivityAddClientHelper(this)

@@ -1,11 +1,16 @@
 package com.hrbabu.tracking.apiBase.apiList
 
 import com.hrbabu.tracking.request_response.addclient.AddClientRequest
+import com.hrbabu.tracking.request_response.alldropdown.GetAllDropdownResponse
+import com.hrbabu.tracking.request_response.applyLeave.SaveEmpLeaveRequest
+import com.hrbabu.tracking.request_response.applyLeave.SaveEmpLeaveResponse
 import com.hrbabu.tracking.request_response.emptoggel.ResponseGetEmployeeActivityToggle
 import com.hrbabu.tracking.request_response.empvisit.EmpVisitRequest
 import com.hrbabu.tracking.request_response.empvisit.EmpVisitResponse
 import com.hrbabu.tracking.request_response.empvisit.SaveEmpVisitRequest
 import com.hrbabu.tracking.request_response.empvisit.SaveEmpVisitResponse
+import com.hrbabu.tracking.request_response.getLeave.GetEmpLeaveRequest
+import com.hrbabu.tracking.request_response.getLeave.GetLeaveResponse
 import io.reactivex.Observable
 import com.hrbabu.tracking.request_response.getResponse.GetResponse
 import com.hrbabu.tracking.request_response.getclient.GetClientRequest
@@ -89,5 +94,17 @@ interface ApiList {
         @Part("VisitCheckInId") VisitCheckInId: RequestBody?,
 //        @Part("CheckOutPhotoUrl") CheckOutPhotoUrl: RequestBody?,
     ): Observable<PunchinPunchoutResponse>
+
+
+
+
+    @GET("/api/Home/GetAllDropDown?Flag=LType")
+    fun getAllDropDown(): Observable<GetAllDropdownResponse>
+
+    @POST("/api/Employee/SaveEmployeeLeave")
+    fun saveEmployeeLeave(@Body request : SaveEmpLeaveRequest): Observable<SaveEmpLeaveResponse>
+
+    @POST("/api/Employee/GetEmployeeLeaves")
+    fun getEmployeeLeaves(@Body request : GetEmpLeaveRequest): Observable<GetLeaveResponse>
 
 }
