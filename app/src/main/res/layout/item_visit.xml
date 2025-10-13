@@ -1,99 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardVisit"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="10dp"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="14dp"
+    >
 
-    app:cardElevation="4dp"
-    app:cardCornerRadius="12dp"
-    app:strokeWidth="0dp"
-    app:cardUseCompatPadding="true"
-    android:foreground="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
-
+    <!-- Top Row: Client Name + Status -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@android:color/white">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <!-- Header: Client Name + Status -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-
-            <TextView
-                android:id="@+id/tvClientName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Client Name"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
-
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pending"
-                android:textStyle="bold"
-                android:textColor="#34A853"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:background="@drawable/bg_status_completed"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <!-- Address -->
         <TextView
-            android:id="@+id/tvAddress"
-            android:layout_width="match_parent"
+            android:id="@+id/tvClientName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="123 Business Park, Downtown"
-            android:textColor="#666"
-            android:textSize="14sp"
-            android:layout_marginTop="6dp" />
+            android:layout_weight="1"
+            android:text="Client Name"
+            android:textColor="@android:color/black"
+            android:textSize="17sp"
+            android:textStyle="bold" />
 
-        <!-- Start Time -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start Time:"
-                android:textColor="#888"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tvStartTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10:30 AM"
-                android:textColor="#000"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:layout_marginStart="4dp" />
-        </LinearLayout>
-
-        <!-- Description -->
         <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Discussion about new project proposal and requirements."
-            android:textColor="#444"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp" />
+            android:text="Pending"
+            android:textSize="12sp"
+            android:textColor="#388E3C"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_status_completed" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+    <!-- Address -->
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="123 Business Park, Downtown"
+        android:textColor="#666"
+        android:textSize="14sp"
+        android:layout_marginTop="6dp" />
+
+    <!-- Start Time Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Time:"
+            android:textColor="#888"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:30 AM"
+            android:textColor="#000"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Discussion about new project proposal and requirements."
+        android:textColor="#444"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Divider Line (Bottom) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>

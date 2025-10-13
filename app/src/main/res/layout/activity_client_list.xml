@@ -53,15 +53,53 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <androidx.appcompat.widget.SearchView
+        <EditText
             android:id="@+id/searchView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:queryHint="Search Clients..."
+            android:layout_height="50dp"
+            android:hint="Search Clients"
+            android:imeOptions="actionSearch"
+            android:paddingHorizontal="10dp"
             android:background="@drawable/bg_search"
-            android:iconifiedByDefault="false"
             android:layout_marginBottom="8dp" />
 
+        <!-- Empty View -->
+        <LinearLayout
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:src="@drawable/empty_add_client"
+                android:contentDescription="No Clients"
+                 />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nothing here yet. Let’s add your first client!"
+                android:textColor="@color/black_shade"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnEmptyAddClient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add First Client"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_marginTop="20dp" />
+        </LinearLayout>
+
+        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewClients"
             android:layout_width="match_parent"

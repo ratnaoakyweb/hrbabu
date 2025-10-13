@@ -6,55 +6,59 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:padding="12dp">
+    android:padding="16dp">
 
-    <!-- Date Range (Main Info at Top) -->
+    <!-- Leave Type Name -->
     <TextView
-        android:id="@+id/tvDateRange"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvLeaveTypeName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="#212121"
-        android:textSize="16sp"
         android:textStyle="bold"
-        tools:text="Jan 1, 2024 - Jan 5, 2024"
+        android:textSize="16sp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/tvNoOfLeaves"
+        tools:text="Casual Leave" />
 
-    <!-- Leave Type (Below Date, Left side) -->
+    <!-- Number of Leaves -->
     <TextView
-        android:id="@+id/tvLeaveType"
+        android:id="@+id/tvNoOfLeaves"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#1A73E8"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintEnd_toStartOf="@+id/tvLevelRemaining"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tvLeaveTypeName"
+        tools:text="5" />
+
+    <!-- "Days" label -->
+    <TextView
+        android:id="@+id/tvLevelRemaining"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="days"
+        android:textColor="#757575"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tvNoOfLeaves"
+        tools:text="days" />
+
+    <!-- Consumed Info -->
+    <TextView
+        android:id="@+id/tvLeaveConsumed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:textColor="#616161"
-        android:textSize="14sp"
-        tools:text="Sick Leave"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDateRange" />
-
-    <!-- Status (Right side of Leave Type) -->
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#388E3C"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        tools:text="Approved"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/tvLeaveType" />
-
-    <!-- Reason -->
-    <TextView
-        android:id="@+id/tvReason"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:textColor="#757575"
         android:textSize="13sp"
-        tools:text="Flu and fever"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvLeaveType" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLeaveTypeName"
+        app:layout_constraintStart_toStartOf="@+id/tvLeaveTypeName"
+        tools:text="2 days consumed" />
 
     <!-- Divider Line -->
     <View
@@ -63,7 +67,7 @@
         android:layout_height="1dp"
         android:background="#E0E0E0"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tvReason"
+        app:layout_constraintTop_toBottomOf="@id/tvLeaveConsumed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

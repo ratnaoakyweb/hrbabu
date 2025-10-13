@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat.animate
+import com.hrbabu.tracking.utils.checkAppUpdate
 
 open class SplashActivity : AppCompatActivity()  {
 
@@ -13,7 +14,12 @@ open class SplashActivity : AppCompatActivity()  {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+//        println(checkAppUpdate("1.1.2", "0.1.3")) // Force update
+//        println(checkAppUpdate("1.1.2", "1.1.1")) // Normal update
+//        println(checkAppUpdate("1.1.2", "1.1.3")) // No update
+//        println(checkAppUpdate("2.0.0", "1.5.9")) // Force update
+//        println(checkAppUpdate("1.0.0", "1.0.0")) // No update
+//        println(checkAppUpdate("1.0.0", "1.0.1")) // No update
         //full screen
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,

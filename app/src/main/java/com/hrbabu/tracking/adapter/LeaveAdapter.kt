@@ -14,7 +14,7 @@ class LeaveAdapter(private val leaveList: List<LeavesItem?>) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: LeavesItem?) = with(binding) {
-            tvEmployeeName.text = item?.employeeName ?: "N/A"
+//            tvEmployeeName.text = item?.employeeName ?: "N/A"
             tvLeaveType.text = item?.leaveType ?: "-"
             tvStatus.text = item?.status ?: "-"
             if(item?.status == "Approved"){

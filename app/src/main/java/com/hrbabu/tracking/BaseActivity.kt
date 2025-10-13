@@ -82,7 +82,7 @@ open class BaseActivity : AppCompatActivity()  {
             packageInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
-            "Unknown"
+            "0.0.0"
         }
     }
 

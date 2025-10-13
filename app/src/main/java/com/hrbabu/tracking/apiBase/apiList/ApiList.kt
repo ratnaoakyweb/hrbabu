@@ -16,6 +16,7 @@ import com.hrbabu.tracking.request_response.getResponse.GetResponse
 import com.hrbabu.tracking.request_response.getclient.GetClientRequest
 import com.hrbabu.tracking.request_response.getclient.GetClientResponse
 import com.hrbabu.tracking.request_response.history.HistoryResponse
+import com.hrbabu.tracking.request_response.leavebalance.GetEmpLeaveBalanceResponse
 import com.hrbabu.tracking.request_response.login.LoginRequest
 import com.hrbabu.tracking.request_response.login.LoginResponse
 import com.hrbabu.tracking.request_response.profile.ProfileResponse
@@ -42,7 +43,7 @@ interface ApiList {
     @GET("/api/Employee/GetEmployeePunchingHistory")
     fun getHistory(): Observable<HistoryResponse>
 
-    @GET("/api/Employee/GetEmployeeActivityToggle")
+    @GET("/api/Employee/GetEmployeeActivityToggleV2")
     fun getEmployeeActivityToggle(): Observable<ResponseGetEmployeeActivityToggle>
 
     @GET("/api/Employee/GetEmployeeProfile")
@@ -106,5 +107,8 @@ interface ApiList {
 
     @POST("/api/Employee/GetEmployeeLeaves")
     fun getEmployeeLeaves(@Body request : GetEmpLeaveRequest): Observable<GetLeaveResponse>
+
+    @GET("/api/Employee/GetEmployeeDashboard")
+    fun getEmployeeLeavesBalance(): Observable<GetEmpLeaveBalanceResponse>
 
 }

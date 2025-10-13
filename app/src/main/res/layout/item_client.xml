@@ -1,79 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="0dp"
-    android:layout_marginHorizontal="2dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="3dp"
-    app:cardUseCompatPadding="true"
-    android:foreground="?attr/selectableItemBackground"
-    app:strokeColor="#E0E0E0"
-    app:strokeWidth="1dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="14dp">
 
+    <!-- Top Row: Client Name + Status -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="14dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <!-- Top Row: Client Name + Status -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/tvClientName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Oakyweb"
-                android:textColor="@android:color/black"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvClientStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Active"
-                android:textSize="12sp"
-                android:textColor="#388E3C"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:layout_marginStart="6dp"
-                android:layout_gravity="center_vertical"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Address -->
         <TextView
-            android:id="@+id/tvClientAddress"
-            android:layout_width="match_parent"
+            android:id="@+id/tvClientName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="B-23, Noida, India"
-            android:textColor="#666"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp" />
+            android:layout_weight="1"
+            android:text="Oakyweb"
+            android:textColor="@android:color/black"
+            android:textSize="17sp"
+            android:textStyle="bold" />
 
-        <!-- Contact Info Row -->
+        <TextView
+            android:id="@+id/tvClientStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Active"
+            android:textSize="12sp"
+            android:textColor="#388E3C"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"
+           />
+    </LinearLayout>
+
+    <!-- Address -->
+    <TextView
+        android:id="@+id/tvClientAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="B-23, Noida, India"
+        android:textColor="#666"
+        android:textSize="14sp"
+        android:layout_marginTop="6dp" />
+
+    <!-- Navigation Row (Icon + Text) -->
+    <LinearLayout
+        android:id="@+id/llNavigate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <ImageView
+            android:id="@+id/ivNavigate"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_navigation"
+            app:tint="@color/colorPrimary"
+            android:layout_marginEnd="6dp" />
+
+        <TextView
+            android:id="@+id/tvNavigateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Navigate"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Contact Info Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvClientEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="info@oakyweb.com"
+            android:textColor="#2196F3"
+            android:textSize="13sp" />
+
+        <!-- Phone layout with icon and number -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/llPhone"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="6dp">
+            android:gravity="center_vertical"
+            android:paddingHorizontal="4dp"
+            android:clickable="true"
+            android:focusable="true">
 
-            <TextView
-                android:id="@+id/tvClientEmail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="info@oakyweb.com"
-                android:textColor="#2196F3"
-                android:textSize="13sp" />
+            <ImageView
+                android:id="@+id/ivPhone"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_phone"
+                android:layout_marginEnd="4dp" />
 
             <TextView
                 android:id="@+id/tvClientPhone"
@@ -81,10 +120,15 @@
                 android:layout_height="wrap_content"
                 android:text="7894561230"
                 android:textColor="#000"
-                android:textSize="13sp"
-                android:drawableLeft="@drawable/ic_phone"
-                android:drawablePadding="4dp" />
+                android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <!-- Divider Line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>

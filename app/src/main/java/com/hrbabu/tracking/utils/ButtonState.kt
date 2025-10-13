@@ -13,3 +13,10 @@ enum class CameraState {
     CHECK_IN,
     CHECK_OUT
 }
+
+
+enum class AppUpdateState {
+    FORCE_UPDATE,
+    OPTIONAL_UPDATE,
+    NO_UPDATE
+}

@@ -252,7 +252,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-
+                <ImageView
+                    android:src="@drawable/empty_no_punchin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"/>
 
                 <!-- Main Message -->
                 <TextView
@@ -277,12 +280,16 @@
                 <LinearLayout
                     android:id="@+id/llSwitch1"
                     android:clickable="true"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switchPunchIn1"
                     android:clickable="false"
                     android:focusable="false"
+                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Click to Punch In"

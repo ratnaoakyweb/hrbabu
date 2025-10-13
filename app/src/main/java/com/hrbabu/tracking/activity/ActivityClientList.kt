@@ -3,6 +3,8 @@ package com.hrbabu.tracking.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
@@ -49,8 +51,10 @@ class ActivityClientList : BaseActivity() {
         }
 
         binding.btnAddNewClient.setOnClickListener {
+            startForResult.launch(Intent(this, AddNewClientActivity::class.java))
+        }
 
-
+        binding.btnEmptyAddClient.setOnClickListener {
             startForResult.launch(Intent(this, AddNewClientActivity::class.java))
         }
 
@@ -66,6 +70,8 @@ class ActivityClientList : BaseActivity() {
     fun setUpClients(clients: List<ClientsItem?>?) {
 
         if (!clients.isNullOrEmpty()) {
+            binding.emptyView.visibility = android.view.View.GONE
+            binding.recyclerViewClients.visibility = android.view.View.VISIBLE
             clientList = clients
             adapter = ClientAdapter(clientList,object : ClientAdapter.OnClientClickListener {
                 override fun onClientClick(client: ClientsItem?) {
@@ -83,26 +89,33 @@ class ActivityClientList : BaseActivity() {
 
             setupSearch()
         } else {
-            Toast.makeText(
-                this,
-                "No clients found",
-                Toast.LENGTH_SHORT
-            ).show()
+
+            binding.emptyView.visibility = android.view.View.VISIBLE
+            binding.recyclerViewClients.visibility = android.view.View.GONE
+
         }
     }
 
     private fun setupSearch() {
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
+        binding.searchView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not needed
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Filter the list as the user types
                 val filteredList = clientList.filter {
-                    it?.clientName!!.contains(newText ?: "", ignoreCase = true)
+                    it?.clientName!!.contains(s.toString(), ignoreCase = true)
                 }
                 adapter.filterList(filteredList)
-                return true
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Not needed
             }
         })
+
     }
 
     override fun onDestroy() {

@@ -1,6 +1,7 @@
 package com.hrbabu.tracking.utils
 
 import android.content.Context
+import android.util.Log
 import androidx.fragment.app.Fragment
 import com.hrbabu.tracking.apiBase.ApiClient
 import com.hrbabu.tracking.apiBase.apiList.ApiList
@@ -8,6 +9,7 @@ import com.hrbabu.tracking.apiBase.apiList.ApiList
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.io.Console
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -124,12 +126,54 @@ fun getFormattedDate(input : String): String {
         inputFormat.timeZone = TimeZone.getTimeZone("UTC") // or your desired time zone
 
         val date = inputFormat.parse(input)
-        val outputFormat = SimpleDateFormat("dd , MMM EEEE", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
         formattedDate = outputFormat.format(date)
     } catch (e: Exception) {
         e.printStackTrace()
     }
     return formattedDate
 }
+
+fun checkAppUpdate(serverVersion: String , appVersion: String): AppUpdateState{
+    //log
+    Log.e("Version Check--->","Server Version: $serverVersion, App Version: $appVersion")
+    val serverParts = serverVersion.split(".").map { it.toInt() }
+    val appParts = appVersion.split(".").map { it.toInt() }
+
+    val (serverMajor, serverMinor, serverPatch) = serverParts + listOf(0, 0, 0).take(3 - serverParts.size)
+    val (appMajor, appMinor, appPatch) = appParts + listOf(0, 0, 0).take(3 - appParts.size)
+
+    if (serverMajor > appMajor ||
+        (serverMajor == appMajor && serverMinor > appMinor) ||
+        (serverMajor == appMajor && serverMinor == appMinor && serverPatch > appPatch)
+    ) {
+        // Update available
+        println("Update available")
+    } else {
+        // No update needed
+        println("No update needed")
+    }
+
+    if(serverMajor > appMajor){
+        Log.e("Version Check--->","Force Update Needed")
+        return AppUpdateState.FORCE_UPDATE
+    }
+
+    if(serverMajor == appMajor && serverMinor > appMinor){
+        Log.e("Version Check--->","Optional Update Needed")
+        return AppUpdateState.OPTIONAL_UPDATE
+    }
+
+    if(serverMajor == appMajor && serverMinor == appMinor && serverPatch > appPatch){
+        Log.e("Version Check--->","Optional Update Needed")
+        return AppUpdateState.OPTIONAL_UPDATE
+    }
+
+    Log.e("Version Check--->","No Update Needed")
+
+    return AppUpdateState.NO_UPDATE
+
+}
+
 
 

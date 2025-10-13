@@ -1,12 +1,13 @@
 package com.hrbabu.tracking
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.location.LocationManager
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
@@ -17,15 +18,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.hrbabu.tracking.database.AppDatabase
-import com.hrbabu.tracking.database.PunchEvent
 import com.hrbabu.tracking.databinding.ActivityHomeBinding
 import com.hrbabu.tracking.service.LocationService
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -36,9 +34,7 @@ import com.hrbabu.tracking.activity.ActivityLeaveList
 import com.hrbabu.tracking.activity.ActivityProfile
 import com.hrbabu.tracking.activity.ActivityVisitList
 import com.hrbabu.tracking.activity.AddVisitActivity
-import com.hrbabu.tracking.activity.ApplyLeaveActivity
 import com.hrbabu.tracking.adapter.TaskAdapter
-import com.hrbabu.tracking.databinding.ItemTaskBinding
 import com.hrbabu.tracking.helpers.HomeActivityHelper
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.history.RcItem
@@ -191,6 +187,59 @@ class HomeActivity : BaseActivity() {
         setUpSideBar()
 
     }
+
+    fun showUpdateDialog(message: String, isMandatory: Boolean) {
+        val appPackageName = packageName
+        val updateIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = try {
+                Uri.parse("market://details?id=$appPackageName")
+            } catch (e: ActivityNotFoundException) {
+                Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")
+            }
+        }
+
+        val builder = AlertDialog.Builder(this).apply {
+            setTitle("Update Required")
+            setMessage(
+                if (isMandatory) {
+                    "A new version of this app is available and must be installed to continue.\n\n$message"
+                } else {
+                    "A new version of this app is available.\n\n$message"
+                }
+            )
+            setCancelable(!isMandatory)
+
+            setPositiveButton("Update Now") { dialog, _ ->
+                dialog.dismiss()
+                try {
+                    startActivity(updateIntent)
+                } catch (ex: Exception) {
+                    Toast.makeText(
+                        this@HomeActivity,
+                        "Unable to open Play Store.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                if (isMandatory) {
+                    finishAffinity() // Close the app completely
+                }
+            }
+
+            if (!isMandatory) {
+                setNegativeButton("Remind Me Later") { dialog, _ ->
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+
+        // Optional: Customize button colors for a cleaner look
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(ContextCompat.getColor(this, R.color.gray))
+    }
+
 
     fun setUpSideBar(){
         val profileResponse = getProfileResponse()
@@ -561,7 +610,7 @@ class HomeActivity : BaseActivity() {
 //                        Toast.makeText(this@HomeActivity, "Punch-In saved locally", Toast.LENGTH_SHORT).show()
 //                    }
                     if(cameraCurrentState == CameraState.PUNCH_IN){
-                        homeActivityHelper.hitApi(HomeActivityHelper.PunchIn)
+                        homeActivityHelper.hitApi(HomeActivityHelper.KEY_PunchIn)
                     }else if (cameraCurrentState == CameraState.PUNCH_OUT){
                         homeActivityHelper.hitApi(HomeActivityHelper.PunchOut)
                     }else if(cameraCurrentState == CameraState.CHECK_IN){

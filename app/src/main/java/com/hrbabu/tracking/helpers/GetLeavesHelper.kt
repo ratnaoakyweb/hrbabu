@@ -12,6 +12,7 @@ import com.hrbabu.tracking.request_response.applyLeave.SaveEmpLeaveRequest
 import com.hrbabu.tracking.request_response.applyLeave.SaveEmpLeaveResponse
 import com.hrbabu.tracking.request_response.getLeave.GetEmpLeaveRequest
 import com.hrbabu.tracking.request_response.getLeave.GetLeaveResponse
+import com.hrbabu.tracking.request_response.leavebalance.GetEmpLeaveBalanceResponse
 import com.hrbabu.tracking.request_response.profile.ProfileResponse
 import com.hrbabu.tracking.utils.getApiClientAuth
 import com.hrbabu.tracking.utils.sendApiRequest
@@ -21,6 +22,7 @@ class GetLeavesHelper(val activity: ActivityLeaveList) : BaseHelperActivity() {
 
     companion object{
         const val GET_LEAVES_LIST = "getLeaves"
+        const val GET_LEAVE_BALANCE = "getLeavesBalance"
     }
 
     override fun hitApi(apiKey: String) {
@@ -57,7 +59,47 @@ class GetLeavesHelper(val activity: ActivityLeaveList) : BaseHelperActivity() {
                         showRetryDialog(object : OnRerty {
                             override fun onRetry() {
                                 dismissDialog()
-//                            hitApi()
+                                hitApi(GET_LEAVES_LIST)
+                            }
+                        })
+                    }
+
+                    override fun onUnknownError() {
+                        hideProgressDialog()
+                    }
+
+                    override fun onLogout() {
+                        hideProgressDialog()
+                    }
+                })
+            )
+        }else if(apiKey == GET_LEAVE_BALANCE) {
+
+            disposables.add(
+                sendApiRequest(
+                    getApiClientAuth(activity.applicationContext).getEmployeeLeavesBalance() // no token here if your getApiClientAuth already attaches it
+                )!!.subscribeWith(object : CallbackWrapper<GetEmpLeaveBalanceResponse>() {
+                    override fun onSuccess(t: GetEmpLeaveBalanceResponse) {
+                        hideProgressDialog()
+                        activity.setLeaveBalanceData(t.res?.leaveBalances)
+
+                    }
+
+                    override fun onError(t: String?) {
+                        hideProgressDialog()
+                        Toast.makeText(
+                            activity.applicationContext,
+                            t ?: "",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onTimeout() {
+                        hideProgressDialog()
+                        showRetryDialog(object : OnRerty {
+                            override fun onRetry() {
+                                dismissDialog()
+                                hitApi(GET_LEAVE_BALANCE)
                             }
                         })
                     }

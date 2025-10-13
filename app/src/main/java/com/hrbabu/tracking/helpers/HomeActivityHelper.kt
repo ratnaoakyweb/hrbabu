@@ -4,11 +4,11 @@ import android.util.Log
 import android.widget.Toast
 import com.hrbabu.tracking.apiBase.BaseHelperActivity
 import com.hrbabu.tracking.apiBase.CallbackWrapper
-import com.hrbabu.tracking.helpers.LoginActivityHelper.Companion.SIGNIN
 import com.hrbabu.tracking.request_response.emptoggel.ResponseGetEmployeeActivityToggle
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.punchinpunchout.PunchinPunchoutResponse
 import com.hrbabu.tracking.utils.ButtonState
+import com.hrbabu.tracking.utils.checkAppUpdate
 import com.hrbabu.tracking.utils.getApiClientAuth
 import com.hrbabu.tracking.utils.getCurrentUtcTime
 import com.hrbabu.tracking.utils.sendApiRequest
@@ -18,15 +18,11 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : BaseHelperActivity() {
     companion object {
         const val GetHistory = "1"
-        const val PunchIn = "2"
+        const val KEY_PunchIn = "2"
         const val PunchOut = "3"
         const val CheckIn = "4"
         const val CheckOut = "5"
@@ -91,7 +87,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 })
             )
         }else
-        if(apiKey == PunchIn){
+        if(apiKey == KEY_PunchIn){
                 val file = File(homeActivity.filePath)
                 val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val checkInFilePart = MultipartBody.Part.createFormData("CheckInFile", file.name, requestFile)
@@ -125,7 +121,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                             showRetryDialog(object : OnRerty {
                                 override fun onRetry() {
                                     dismissDialog()
-                                    hitApi(PunchIn)
+                                    hitApi(KEY_PunchIn)
                                 }
                             })
                         }
@@ -135,7 +131,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                             showRetryDialog(object : OnRerty {
                                 override fun onRetry() {
                                     dismissDialog()
-                                    hitApi(PunchIn)
+                                    hitApi(KEY_PunchIn)
                                    // hitPunchInApi(filePath)
                                 }
                             })
@@ -145,7 +141,7 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                             showRetryDialog(object : OnRerty {
                                 override fun onRetry() {
                                     dismissDialog()
-                                    hitApi(PunchIn)
+                                    hitApi(KEY_PunchIn)
                                 }
                             })
                         }
@@ -378,6 +374,19 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                             }
                         }
 
+                        //manage app update
+                        val serverVersion = t?.res?.appVersion?.minimumVersion
+
+                        val appVersion = homeActivity.getAppVersionName(homeActivity)
+                        checkAppUpdate(serverVersion?:"", appVersion?:"") .let {
+                            if(it == com.hrbabu.tracking.utils.AppUpdateState.FORCE_UPDATE){
+                                homeActivity.showUpdateDialog("A new version of the app is available. Please update to continue using the app.", true)
+                            }else if(it == com.hrbabu.tracking.utils.AppUpdateState.OPTIONAL_UPDATE){
+                                homeActivity.showUpdateDialog("A new version of the app is available. Would you like to update?", false)
+                            }
+                        }
+
+
 //                        homeActivity.setHistoryData(t)
 //
                         homeActivity.setupToggel(isPunchIn , isVisitCheckIn)
@@ -441,6 +450,6 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
 
 
     override fun onDestroy() {
-
+        disposables.dispose()
     }
 }

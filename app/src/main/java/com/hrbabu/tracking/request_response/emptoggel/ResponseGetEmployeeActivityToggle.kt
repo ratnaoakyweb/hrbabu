@@ -13,11 +13,15 @@ data class ResponseGetEmployeeActivityToggle(
 	@field:SerializedName("rc")
 	val rc: List<RcItem?>? = null,
 
+
+
 	@field:SerializedName("msgkey")
 	val msgkey: String? = null
 )
 
 data class Res(
+	@field:SerializedName("AppVersion")
+	val appVersion: AppVersion? = null,
 
 	@field:SerializedName("ClientName")
 	val clientName: Any? = null,
@@ -33,6 +37,14 @@ data class Res(
 
 	@field:SerializedName("VisitId")
 	val visitId: Int? = null
+)
+
+
+data class AppVersion(
+
+	@field:SerializedName("MinimumVersion")
+	val minimumVersion: String? = null,
+
 )
 
 data class RcItem(
