@@ -25,4 +25,6 @@
     <color name="grayShade">#c3c3c3</color>
     <color name="colorPrimaryLight">#3B78B345</color>
 
+    <color name="ic_launcher_background">#072563</color>
+
 </resources>
