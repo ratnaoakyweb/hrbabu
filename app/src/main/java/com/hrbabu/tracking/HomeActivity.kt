@@ -493,7 +493,22 @@ class HomeActivity : BaseActivity() {
                         LocationLiveData.updateLocation(result.lastLocation!!)
 //                        callback(result.lastLocation)
                         pendingLocation=result.lastLocation
+
+//                        binding.llLocation.visibility= View.VISIBLE
+//
+//                        binding.tvLocation.text= result.lastLocation?.latitude.toString() + ", " + result.lastLocation?.longitude.toString() + System.currentTimeMillis()
+//                        binding.tvLocation.text= System.currentTimeMillis().toString()+ "  -- " + pendingLocation?.isFromMockProvider
                     }
+
+                    //error
+                    override fun onLocationAvailability(availability: LocationAvailability) {
+                        super.onLocationAvailability(availability)
+                        if (!availability.isLocationAvailable) {
+                            binding.llLocation.visibility= View.VISIBLE
+                            binding.tvLocation.text= "Waiting for location..."
+                        }
+                    }
+
                 },
                 Looper.getMainLooper()
             )

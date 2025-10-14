@@ -102,7 +102,11 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                     CheckInTime = getCurrentUtcTime().toRequestBody(textPlain),
                     CheckOutTime = "".toRequestBody(textPlain),
                     CheckOutLat = "".toRequestBody(textPlain),
-                    CheckOutLng = "".toRequestBody(textPlain)
+                    CheckOutLng = "".toRequestBody(textPlain),
+                    isMockLocation = if (homeActivity.pendingLocation?.isFromMockProvider == true)
+                        "1".toRequestBody(textPlain)
+                    else
+                        "0".toRequestBody(textPlain)
                 )
 
                 disposables.add(
@@ -167,7 +171,12 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 CheckInLng = "".toRequestBody(textPlain),
                 CheckOutLat = "0".toRequestBody(textPlain),
                 CheckInTime = "".toRequestBody(textPlain),
-                CheckOutLng = "0".toRequestBody(textPlain)
+                CheckOutLng = "0".toRequestBody(textPlain),
+                isMockLocation = if (homeActivity.pendingLocation?.isFromMockProvider == true)
+                    "1".toRequestBody(textPlain)
+                else
+                    "0".toRequestBody(textPlain)
+
             )
 
             disposables.add(
@@ -233,7 +242,11 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 CheckOutLat = "".toRequestBody(textPlain),
                 CheckOutLng = "".toRequestBody(textPlain),
                 VisitId = homeActivity.selectedVisitId.toString().toRequestBody(textPlain),
-                VisitCheckInId="".toRequestBody(textPlain)
+                VisitCheckInId="".toRequestBody(textPlain),
+                isMockLocation = if (homeActivity.pendingLocation?.isFromMockProvider == true)
+                    "1".toRequestBody(textPlain)
+                else
+                    "0".toRequestBody(textPlain)
             )
 
             disposables.add(
@@ -301,6 +314,10 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 CheckOutTime =getCurrentUtcTime().toRequestBody(textPlain),
                 VisitId = homeActivity.selectedVisitId.toString().toRequestBody(textPlain),
                 VisitCheckInId= homeActivity.selectedVisitCheckInId.toString().toRequestBody(textPlain),
+                isMockLocation = if (homeActivity.pendingLocation?.isFromMockProvider == true)
+                    "1".toRequestBody(textPlain)
+                else
+                    "0".toRequestBody(textPlain)
             )
 
             disposables.add(

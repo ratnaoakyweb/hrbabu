@@ -73,7 +73,8 @@ interface ApiList {
         @Part("CheckInLng") CheckInLng: RequestBody,
         @Part("CheckOutLat") CheckOutLat: RequestBody?,
         @Part("CheckInTime") CheckInTime: RequestBody,
-        @Part("CheckOutLng") CheckOutLng: RequestBody?
+        @Part("CheckOutLng") CheckOutLng: RequestBody?,
+        @Part("isMockLocation") isMockLocation: RequestBody?
     ): Observable<PunchinPunchoutResponse>
 
 
@@ -93,6 +94,7 @@ interface ApiList {
         @Part("CheckOutLat") CheckOutLat: RequestBody?,
         @Part("CheckOutLng") CheckOutLng: RequestBody?,
         @Part("VisitCheckInId") VisitCheckInId: RequestBody?,
+        @Part("isMockLocation") isMockLocation: RequestBody?
 //        @Part("CheckOutPhotoUrl") CheckOutPhotoUrl: RequestBody?,
     ): Observable<PunchinPunchoutResponse>
 
