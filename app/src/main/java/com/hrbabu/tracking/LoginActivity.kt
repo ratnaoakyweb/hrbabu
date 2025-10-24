@@ -188,8 +188,8 @@ class LoginActivity : BaseActivity() {
         password = binding.etPassword.text?.toString()?.trim().orEmpty()
 
         when {
-            email.isEmpty() -> showToast("Enter Email")
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> showToast("Enter a valid Email")
+            email.isEmpty() -> showToast("Enter Email / Username")
+//            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> showToast("Enter a valid Email")
             password.isEmpty() -> showToast("Enter Password")
             else -> helper.hitApi(LoginActivityHelper.SIGNIN)
         }

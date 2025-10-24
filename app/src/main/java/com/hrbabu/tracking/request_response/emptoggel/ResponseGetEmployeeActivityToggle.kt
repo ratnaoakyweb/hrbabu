@@ -11,51 +11,22 @@ data class ResponseGetEmployeeActivityToggle(
 	val res: Res? = null,
 
 	@field:SerializedName("rc")
-	val rc: List<RcItem?>? = null,
-
-
+	val rc: List<Any?>? = null,
 
 	@field:SerializedName("msgkey")
 	val msgkey: String? = null
 )
 
-data class Res(
-	@field:SerializedName("AppVersion")
-	val appVersion: AppVersion? = null,
-
-	@field:SerializedName("ClientName")
-	val clientName: Any? = null,
-
-	@field:SerializedName("ActivityType")
-	val activityType: Any? = null,
-
-	@field:SerializedName("EmployeeId")
-	val employeeId: Int? = null,
-
-	@field:SerializedName("ActivityTime")
-	val activityTime: Any? = null,
-
-	@field:SerializedName("VisitId")
-	val visitId: Int? = null
-)
-
-
-data class AppVersion(
-
-	@field:SerializedName("MinimumVersion")
-	val minimumVersion: String? = null,
-
-)
-
-data class RcItem(
-	@field:SerializedName("ClientId")
-	val clientId: Int? = null,
+data class ActivityToggleItem(
 
 	@field:SerializedName("ClientName")
 	val clientName: Any? = null,
 
 	@field:SerializedName("ActivityType")
 	val activityType: String? = null,
+
+	@field:SerializedName("ClientId")
+	val clientId: Int? = null,
 
 	@field:SerializedName("EmployeeId")
 	val employeeId: Int? = null,
@@ -68,4 +39,25 @@ data class RcItem(
 
 	@field:SerializedName("VisitCheckInId")
 	val visitCheckInId: Int? = null
+)
+
+data class AppVersion(
+
+	@field:SerializedName("MinimumVersion")
+	val minimumVersion: String? = null,
+
+	@field:SerializedName("ForceUpdate")
+	val forceUpdate: Boolean? = null,
+
+	@field:SerializedName("MaximumVersion")
+	val maximumVersion: String? = null
+)
+
+data class Res(
+
+	@field:SerializedName("AppVersion")
+	val appVersion: AppVersion? = null,
+
+	@field:SerializedName("ActivityToggle")
+	val activityToggle: List<ActivityToggleItem?>? = null
 )

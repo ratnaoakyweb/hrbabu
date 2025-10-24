@@ -376,20 +376,42 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                         var isVisitCheckIn = false
 
                         // Get the list safely
-                        val list = t?.rc ?: emptyList()
-                        list.forEach { item ->
-                            when (item?.activityType?.trim()?.lowercase()) {
-                                "punch in" -> isPunchIn = true
+//                        val list = t?.rc ?: emptyList()
+//                        list.forEach { item ->
+//                            when (item?.activityType?.trim()?.lowercase()) {
+//                                "punch in" -> isPunchIn = true
+//                                "visit check in" -> {
+//                                    isVisitCheckIn = true
+//                                    homeActivity.selectedClientId=item.clientId ?: -1
+//                                    homeActivity.selectedVisitId=item.visitId ?: -1
+//                                    homeActivity.selectedVisitCheckInId=item.visitCheckInId ?: -1
+//                                    homeActivity.selectedVisitCheckInTime = item.activityTime ?: ""
+//
+//                                }
+//                            }
+//                        }
+
+                        val data = t?.res
+
+                       data?.activityToggle?.forEach {
+
+                            when(it?.activityType.toString().trim().lowercase()){
+                                "punch in" -> {
+                                    isPunchIn = true
+                                }
                                 "visit check in" -> {
                                     isVisitCheckIn = true
-                                    homeActivity.selectedClientId=item.clientId ?: -1
-                                    homeActivity.selectedVisitId=item.visitId ?: -1
-                                    homeActivity.selectedVisitCheckInId=item.visitCheckInId ?: -1
-                                    homeActivity.selectedVisitCheckInTime = item.activityTime ?: ""
+                                    homeActivity.selectedClientId=it?.clientId ?: -1
+                                    homeActivity.selectedVisitId=it?.visitId ?: -1
+                                    homeActivity.selectedVisitCheckInId=it?.visitCheckInId ?: -1
+                                    homeActivity.selectedVisitCheckInTime = it?.activityTime ?: ""
 
                                 }
                             }
                         }
+
+
+
 
                         //manage app update
                         val serverVersion = t?.res?.appVersion?.minimumVersion

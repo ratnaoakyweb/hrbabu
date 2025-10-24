@@ -25,8 +25,8 @@ class AddVisitActivity : AppCompatActivity() {
     private lateinit var helper: ActivityAddVisitHelper
     val clientNames = mutableListOf("Select Client")
     val clientId = mutableListOf("Select Client")
-    var selectedFromTime = ""
-    var selectedToTime = ""
+//    var selectedFromTime = ""
+//    var selectedToTime = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddVisitBinding.inflate(layoutInflater)
@@ -98,10 +98,10 @@ class AddVisitActivity : AppCompatActivity() {
         binding.etVisitDate.setOnClickListener { openDatePicker() }
 
         // Pick From time
-        binding.etFromTime.setOnClickListener { openTimePicker(binding.etFromTime,true) }
+//        binding.etFromTime.setOnClickListener { openTimePicker(binding.etFromTime,true) }
 
         // Pick To time
-        binding.etToTime.setOnClickListener { openTimePicker(binding.etToTime,false) }
+//        binding.etToTime.setOnClickListener { openTimePicker(binding.etToTime,false) }
 
         // Save click
         binding.btnSaveVisit.setOnClickListener { saveVisit() }
@@ -131,34 +131,36 @@ class AddVisitActivity : AppCompatActivity() {
         }, year, month, day).show()
     }
 
-    private fun openTimePicker(target: android.widget.EditText, ifFromTime : Boolean ) {
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
-
-
-        TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-            val amPm = if (selectedHour >= 12) "PM" else "AM"
-            val hourIn12 = if (selectedHour % 12 == 0) 12 else selectedHour % 12
-
-            val timeStr = String.format("%02d:%02d %s", hourIn12, selectedMinute, amPm)
-            target.setText(timeStr)
-            if(ifFromTime){
-                val timeStr = String.format("%02d:%02d:00.000Z", selectedHour, selectedMinute)
-            val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-            selectedFromTime=("${todayDate}T$timeStr")
-            }else{
-                val timeStr = String.format("%02d:%02d:00.000Z", selectedHour, selectedMinute)
-                val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                selectedToTime=("${todayDate}T$timeStr")
-            }
-        }, hour, minute, false).show()
-//        TimePickerDialog(this, { _, h, m ->
-//            val timeStr = String.format("%02d:%02d:00.000Z", h, m)
+//    private fun openTimePicker(target: android.widget.EditText, ifFromTime : Boolean ) {
+//        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+//        val minute = calendar.get(Calendar.MINUTE)
+//
+//
+//        TimePickerDialog(this, { _, selectedHour, selectedMinute ->
+//            val amPm = if (selectedHour >= 12) "PM" else "AM"
+//            val hourIn12 = if (selectedHour % 12 == 0) 12 else selectedHour % 12
+//
+//            val timeStr = String.format("%02d:%02d %s", hourIn12, selectedMinute, amPm)
+//            target.setText(timeStr)
+//            if(ifFromTime){
+//                val timeStr = String.format("%02d:%02d:00.000Z", selectedHour, selectedMinute)
 //            val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-//            target.setText("${todayDate}T$timeStr")
+//            selectedFromTime=("${todayDate}T$timeStr")
+//            }else{
+//                val timeStr = String.format("%02d:%02d:00.000Z", selectedHour, selectedMinute)
+//                val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+//                selectedToTime=("${todayDate}T$timeStr")
+//            }
 //        }, hour, minute, false).show()
-
-    }
+//
+//
+//    //        TimePickerDialog(this, { _, h, m ->
+////            val timeStr = String.format("%02d:%02d:00.000Z", h, m)
+////            val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+////            target.setText("${todayDate}T$timeStr")
+////        }, hour, minute, false).show()
+//
+//    }
 
     private fun saveVisit() {
         val visitDate = binding.etVisitDate.text.toString().trim()

@@ -35,6 +35,7 @@ import com.hrbabu.tracking.activity.ActivityProfile
 import com.hrbabu.tracking.activity.ActivityVisitList
 import com.hrbabu.tracking.activity.AddVisitActivity
 import com.hrbabu.tracking.adapter.TaskAdapter
+import com.hrbabu.tracking.camera.CustomCamera
 import com.hrbabu.tracking.helpers.HomeActivityHelper
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.history.RcItem
@@ -50,6 +51,7 @@ class HomeActivity : BaseActivity() {
     private lateinit var homeActivityHelper: HomeActivityHelper
     companion object {
         private const val REQUEST_CHECK_SETTINGS = 3001
+        private const val CAMERA_PERMISSION_CODE = 100
     }
 
     var pendingLocation: android.location.Location? = null
@@ -62,6 +64,24 @@ class HomeActivity : BaseActivity() {
     var selectedVisitId = -1;
     var selectedVisitCheckInId = -1;
     var selectedVisitCheckInTime = "";
+
+    private fun checkCameraPermission() : Boolean {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE
+            )
+            return false
+        } else {
+            return true
+        }
+    }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -135,12 +155,12 @@ class HomeActivity : BaseActivity() {
             }else if (currentState == ButtonState.CHECK_OUT){
                 cameraCurrentState = CameraState.CHECK_OUT
                 if(pendingLocation!=null){
-                    openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                    openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                 }else{
                     captureAccurateLocation { location ->
                         if (location != null) {
                             pendingLocation = location
-                            openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                            openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                         }
                         else {
                             Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
@@ -161,7 +181,7 @@ class HomeActivity : BaseActivity() {
 ////                        captureAccurateLocation { location ->
 ////                            if (location != null) {
 ////                                pendingLocation = location
-////                                openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+////                                openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
 ////                            }
 ////                            else {
 ////                                    Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
@@ -258,7 +278,7 @@ class HomeActivity : BaseActivity() {
                 captureAccurateLocation { location ->
                     if (location != null) {
                         pendingLocation = location
-                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                     }
                     else {
 //                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
@@ -268,7 +288,7 @@ class HomeActivity : BaseActivity() {
 //                            latitude = 0.0
 //                            longitude = 0.0
 //                        }
-//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
 
                     }
 
@@ -282,8 +302,6 @@ class HomeActivity : BaseActivity() {
         if(selectedVisitCheckInTime.isNotEmpty() && isVisitCheckIn){
             binding.tvClockIn.text = "Check-In Time : ${getFormattedTime(selectedVisitCheckInTime)}"
             binding.tvClockIn.visibility = View.VISIBLE
-        }else{
-
         }
         binding.switchPunchIn.isChecked = isPunchIn
         if(isVisitCheckIn){
@@ -314,11 +332,14 @@ class HomeActivity : BaseActivity() {
             binding.llSwitch.performClick()
         }
         binding.llSwitch.setOnClickListener {
+
             if(binding.llLocation.visibility == View.VISIBLE){
                 Toast.makeText(this, "Please wait location is being captured", Toast.LENGTH_LONG).show()
 
                 return@setOnClickListener
             }
+            
+          
             captureAccurateLocation { location ->
 
                 if(location == null){
@@ -327,37 +348,44 @@ class HomeActivity : BaseActivity() {
                     return@captureAccurateLocation
                 }
             }
-
+            if(!checkCameraPermission()){
+              return@setOnClickListener
+            }
             if(!binding.switchPunchIn.isChecked){
 
                 captureAccurateLocation { location ->
                     if (location != null) {
                         pendingLocation = location
                         cameraCurrentState = CameraState.PUNCH_IN
-                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                     } else {
 
                         pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
                             latitude = 0.0
                             longitude = 0.0
                         }
-                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
 
                     }
                 }
-            }else{
+            }
+            else{
+                if(currentState == ButtonState.CHECK_OUT){
+                    Toast.makeText(this, "Please check-out from visit first", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
                 cameraCurrentState = CameraState.PUNCH_OUT
                 captureAccurateLocation { location ->
                     if (location != null) {
                         pendingLocation = location
-                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                     } else {
 
                         pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
                             latitude = 0.0
                             longitude = 0.0
                         }
-                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
 
                     }
 
@@ -366,66 +394,13 @@ class HomeActivity : BaseActivity() {
 
 
         }
-        binding.switchPunchIn.setOnCheckedChangeListener { _, isChecked ->
 
-
-
-
-
-//            if (isChecked) {
-//                binding.tvStatus.text = "Working"
-//                binding.tvStatus.setTextColor("#4CAF50".toColorInt())
-//
-//                captureAccurateLocation { location ->
-//                    if (location != null) {
-//                        pendingLocation = location
-//                        cameraCurrentState = CameraState.PUNCH_IN
-//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-//                    } else {
-//
-//                        pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
-//                            latitude = 0.0
-//                            longitude = 0.0
-//                        }
-//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-//
-//                    }
-//                }
-//                startLocationService()
-//            } else {
-//                binding.tvStatus.text = "Not Working"
-//                binding.tvStatus.setTextColor(Color.parseColor("#FF5252"))
-//                cameraCurrentState = CameraState.PUNCH_OUT
-//                captureAccurateLocation { location ->
-//                    if (location != null) {
-//                        pendingLocation = location
-//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-//                    } else {
-//
-//                        pendingLocation =  android.location.Location(LocationManager.GPS_PROVIDER).apply {
-//                            latitude = 0.0
-//                            longitude = 0.0
-//                        }
-//                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-//
-//                    }
-//                    stopLocationService()
-//                }
-//            }
-        }
     }
 
     fun setHistoryData(response: HistoryResponse?){
         if(response!=null){
             if((response.rc?.size ?: 0) > 0){
                 binding.clNoData.visibility=View.GONE
-                if((response.rc?.get(0)?.activityType ?: "") == "Punch In"){
-                    binding.switchPunchIn.isChecked=true
-                    startLocationService()
-
-                }else if((response.rc?.get(0)?.activityType ?: "") == "Punch Out"){
-                    binding.switchPunchIn.isChecked=false
-                }
 
                 binding.recyclerTasks.adapter = TaskAdapter(response.rc as List<RcItem>)
             }else{
@@ -598,9 +573,9 @@ class HomeActivity : BaseActivity() {
     private val openCameraLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val bitmap = result.data?.extras?.get("data") as? Bitmap
-                if (bitmap != null && pendingLocation != null) {
-                    val imagePath = saveImageToCache(bitmap)
+                val url = result.data?.getStringExtra("url")
+                if (url != null && pendingLocation != null) {
+                    val imagePath = url
                     filePath = imagePath
                     // Reverse geocode
                     val geocoder = android.location.Geocoder(this, Locale.getDefault())
@@ -661,7 +636,7 @@ class HomeActivity : BaseActivity() {
                 captureAccurateLocation { location ->
                     if (location != null) {
                         pendingLocation = location
-                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                     }
                 }
             } else {
@@ -750,12 +725,12 @@ class HomeActivity : BaseActivity() {
                 if(selectedClientId != -1 && selectedVisitId!= -1){
                     cameraCurrentState = CameraState.CHECK_IN
                     if(pendingLocation!=null){
-                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                     }
 //                    captureAccurateLocation { location ->
 //                        if (location != null) {
 //                            pendingLocation = location
-//                            openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+//                            openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
 //                        }
 //                        else {
 ////                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
@@ -765,7 +740,7 @@ class HomeActivity : BaseActivity() {
 ////                            latitude = 0.0
 ////                            longitude = 0.0
 ////                        }
-////                        openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+////                        openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
 //
 //                        }
 //
@@ -777,7 +752,7 @@ class HomeActivity : BaseActivity() {
                         captureAccurateLocation { location ->
                             if (location != null) {
                                 pendingLocation = location
-                                openCameraLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                                openCameraLauncher.launch(Intent(this@HomeActivity, CustomCamera::class.java))
                             }
                             else {
                                     Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
@@ -830,6 +805,15 @@ class HomeActivity : BaseActivity() {
                         }
                         .show()
 
+                }
+            }
+
+            CAMERA_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                    Toast.makeText(this, "Camera permission granted", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }

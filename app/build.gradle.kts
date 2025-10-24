@@ -13,8 +13,8 @@ android {
         applicationId = "com.hrbabu.tracking"
         minSdk = 23
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.0.10"
+        versionCode = 11
+        versionName = "1.0.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -69,4 +69,6 @@ dependencies {
     implementation(libs.retrofit.adapter.rxjava2)
     implementation(libs.okhttp.logging)
     implementation(libs.rxandroid)
+    implementation(libs.cameraview)
+
 }
