@@ -169,9 +169,9 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
                 CheckInLat = "0".toRequestBody(textPlain),
                 CheckOutTime = getCurrentUtcTime().toRequestBody(textPlain),
                 CheckInLng = "".toRequestBody(textPlain),
-                CheckOutLat = "0".toRequestBody(textPlain),
                 CheckInTime = "".toRequestBody(textPlain),
-                CheckOutLng = "0".toRequestBody(textPlain),
+                CheckOutLat = homeActivity.pendingLocation?.latitude.toString().toRequestBody(textPlain),
+                CheckOutLng = homeActivity.pendingLocation?.longitude.toString().toRequestBody(textPlain),
                 isMockLocation = if (homeActivity.pendingLocation?.isFromMockProvider == true)
                     "1".toRequestBody(textPlain)
                 else
