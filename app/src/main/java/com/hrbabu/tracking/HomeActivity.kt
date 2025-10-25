@@ -433,10 +433,10 @@ class HomeActivity : BaseActivity() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 //
          val locationRequest = LocationRequest.Builder(
-             Priority.PRIORITY_HIGH_ACCURACY, 5000L // 5 seconds, reasonable for most apps
+             Priority.PRIORITY_HIGH_ACCURACY, 10000L * 6 // 10 seconds, reasonable for most apps
          )
              .setWaitForAccurateLocation(false)      // accept approximate first
-             .setMinUpdateIntervalMillis(2000L)     // minimum 2 seconds between updates
+             .setMinUpdateIntervalMillis(10000L * 6 )     // minimum 10 seconds between updates
              .build()
 
 

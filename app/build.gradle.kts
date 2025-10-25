@@ -13,8 +13,8 @@ android {
         applicationId = "com.hrbabu.tracking"
         minSdk = 23
         targetSdk = 36
-        versionCode = 11
-        versionName = "1.0.11"
+        versionCode = 12
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
