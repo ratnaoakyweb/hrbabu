@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Kadence HRD</string>
+    <string name="app_name">HRMS OAKYWEB</string>
     <string name="action_settings">Settings</string>
+    <string name="sign_in_to_your_account">Sign In to Your \nAccount</string>
 
 
 </resources>

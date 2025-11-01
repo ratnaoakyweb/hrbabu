@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Primary Colors -->
-    <color name="colorPrimary">#78B345</color> <!-- Bright Blue (Login Button, Links) -->
+    <color name="colorPrimary">#307A59</color> <!-- Bright Blue (Login Button, Links) -->
     <color name="colorPrimaryDark">#498000</color> <!-- Darker Blue -->
     <color name="colorAccent">#FF9800</color> <!-- Optional highlight (not used yet) -->
     <color name="colorRed">#F44336</color> <!-- Optional highlight (not used yet) -->

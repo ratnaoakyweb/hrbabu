@@ -70,5 +70,6 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.rxandroid)
     implementation(libs.cameraview)
+    implementation(libs.sdp)
 
 }
