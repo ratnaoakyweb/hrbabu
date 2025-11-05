@@ -17,7 +17,7 @@ class AppDialog {
         layoutInternetConnectivityBinding =
             LayoutInternetConnectivityBinding.inflate(LayoutInflater.from(context))
 
-        if (!::dialogInternet.isInitialized) {
+//        if (!::dialogInternet.isInitialized) {
             dialogInternet = Dialog(context)
             dialogInternet.window!!.setLayout(
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -26,7 +26,7 @@ class AppDialog {
             dialogInternet.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialogInternet.setContentView(layoutInternetConnectivityBinding.root)
             dialogInternet.setCancelable(false)
-        }
+//        }
 
 
         layoutInternetConnectivityBinding.tvRetry.setOnClickListener {

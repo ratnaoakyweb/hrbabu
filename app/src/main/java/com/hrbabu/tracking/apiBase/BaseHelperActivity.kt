@@ -135,7 +135,8 @@ abstract class BaseHelperActivity {
 
     fun showRetryDialog(listener: OnRerty) {
         try {
-            appDialog.internetConnectivityDialog(thisActivity.applicationContext, listener)
+            appDialog= AppDialog()
+            appDialog.internetConnectivityDialog(thisActivity.baseContext, listener)
 
         } catch (e: Exception) {
             e.printStackTrace()

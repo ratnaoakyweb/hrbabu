@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat.animate
+import com.hrbabu.tracking.utils.CommonUtils
 import com.hrbabu.tracking.utils.checkAppUpdate
 
 open class SplashActivity : AppCompatActivity()  {
@@ -34,8 +35,15 @@ open class SplashActivity : AppCompatActivity()  {
         //Time for 2 seconds
 
        animate(binding.root).alpha(1f).setDuration(2000).withEndAction {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+
+           if(CommonUtils.isAttendanceApp){
+               startActivity(Intent(this, AutoAttendanceActivity::class.java))
+               finish()
+           }else {
+
+               startActivity(Intent(this, LoginActivity::class.java))
+               finish()
+           }
         }
 
     }

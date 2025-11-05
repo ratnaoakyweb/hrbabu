@@ -61,6 +61,24 @@ interface ApiList {
     @POST("/api/Employee/SaveClient")
     fun saveClients(@Body request: AddClientRequest): Observable<GetClientResponse>
 
+
+    @Multipart
+    @POST("api/Employee/EmpPunchInOutManually")
+    fun empPunchInOutManually(
+        @Part CheckInFile: MultipartBody.Part?,
+        @Part CheckOutFile: MultipartBody.Part?,
+        @Part("Flag") Flag: RequestBody,
+        @Part("DeviceType") DeviceType: RequestBody,
+        @Part("EmployeeId") EmployeeId: RequestBody,
+        @Part("CheckInLat") CheckInLat: RequestBody,
+        @Part("CheckOutTime") CheckOutTime: RequestBody?,
+        @Part("CheckInLng") CheckInLng: RequestBody,
+        @Part("CheckOutLat") CheckOutLat: RequestBody?,
+        @Part("CheckInTime") CheckInTime: RequestBody,
+        @Part("CheckOutLng") CheckOutLng: RequestBody?,
+        @Part("isMockLocation") isMockLocation: RequestBody?
+    ): Observable<PunchinPunchoutResponse>
+
     @Multipart
     @POST("api/Employee/EmpPunchInOut")
     fun empPunchInOut(

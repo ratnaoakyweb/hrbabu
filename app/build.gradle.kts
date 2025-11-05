@@ -11,10 +11,11 @@ android {
 
     defaultConfig {
         applicationId = "com.hrbabu.tracking"
+//        applicationId = "com.hrbabu.tracking.employee"
         minSdk = 23
         targetSdk = 36
-        versionCode = 12
-        versionName = "2.0.0"
+        versionCode = 13
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -70,5 +71,6 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.rxandroid)
     implementation(libs.cameraview)
+    implementation(libs.awesomeDialog)
 
 }

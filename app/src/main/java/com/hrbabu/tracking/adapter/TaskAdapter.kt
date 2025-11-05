@@ -54,9 +54,9 @@ class TaskAdapter(private val taskList: List<RcItem>) :
         if (dateString.isNullOrEmpty()) return ""
         return try {
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS", Locale.getDefault())
-            parser.timeZone = TimeZone.getTimeZone("UTC")
+//            parser.timeZone = TimeZone.getTimeZone("UTC")
             val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-            formatter.timeZone = TimeZone.getDefault()
+//            formatter.timeZone = TimeZone.getDefault()
             val date = parser.parse(dateString)
             formatter.format(date!!)
         } catch (e: Exception) {
@@ -68,9 +68,9 @@ class TaskAdapter(private val taskList: List<RcItem>) :
         if (dateString.isNullOrEmpty()) return ""
         return try {
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS", Locale.getDefault())
-            parser.timeZone = TimeZone.getTimeZone("UTC")
+//            parser.timeZone = TimeZone.getTimeZone("UTC")
             val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
-            formatter.timeZone = TimeZone.getDefault()
+//            formatter.timeZone = TimeZone.getDefault()
             val date = parser.parse(dateString)
             formatter.format(date!!)
         } catch (e: Exception) {
