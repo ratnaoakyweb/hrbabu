@@ -154,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Employee Id" />
+                    android:text="Employee Code" />
 
                 <EditText
                     android:id="@+id/edEmpId"
@@ -174,17 +174,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:orientation="horizontal">
-
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/buttonProceed"
+                            android:layout_width="match_parent"
+                            android:text="Proceed"
+                            android:backgroundTint="@android:color/holo_green_dark"
+                            android:textColor="@android:color/white"
+                            android:layout_height="wrap_content"/>
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnClockIn"
                         android:layout_width="0dp"
+
                         android:layout_height="150dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_box"
                         android:backgroundTint="#4CAF50"
                         android:text="Check In"
                         android:textColor="@color/white"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnClockOut"
@@ -192,9 +199,10 @@
                         android:layout_height="150dp"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
+                        android:visibility="gone"
                         android:background="@drawable/bg_box"
                         android:backgroundTint="#FF5252"
-                        android:text="Clock Out"
+                        android:text="Checkout Out"
                         android:textColor="#FFFFFF" />
                 </LinearLayout>
 

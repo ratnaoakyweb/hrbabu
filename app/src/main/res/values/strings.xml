@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Kadence HRD</string>
-<!--    <string name="app_name">Kadence Attendance</string>-->
+<!--    <string name="app_name">Kadence HRD</string>-->
+    <string name="app_name">Kadence Attendance</string>
     <string name="action_settings">Settings</string>
-    <string name="enter_employee_id">Enter Employee Id</string>
+    <string name="enter_employee_id">Enter Employee Code</string>
 
 
 </resources>

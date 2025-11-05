@@ -10,8 +10,8 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.hrbabu.tracking"
-//        applicationId = "com.hrbabu.tracking.employee"
+//        applicationId = "com.hrbabu.tracking"
+        applicationId = "com.hrbabu.tracking.employee"
         minSdk = 23
         targetSdk = 36
         versionCode = 13

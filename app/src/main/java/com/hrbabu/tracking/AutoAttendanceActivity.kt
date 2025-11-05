@@ -1,6 +1,7 @@
 package com.hrbabu.tracking
 
 import android.Manifest
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -37,6 +38,7 @@ import com.hrbabu.tracking.databinding.ActivityAutoAttendanceBinding
 import com.hrbabu.tracking.helpers.AutoAttendanceActivityHelper
 import com.hrbabu.tracking.helpers.AutoAttendanceActivityHelper.Companion.CheckIn
 import com.hrbabu.tracking.helpers.AutoAttendanceActivityHelper.Companion.CheckOut
+import com.hrbabu.tracking.helpers.AutoAttendanceActivityHelper.Companion.KEY_GetEmp
 import com.hrbabu.tracking.helpers.AutoAttendanceActivityHelper.Companion.KEY_PunchIn
 import com.hrbabu.tracking.helpers.AutoAttendanceActivityHelper.Companion.PunchOut
 import com.hrbabu.tracking.helpers.HomeActivityHelper
@@ -68,6 +70,7 @@ class AutoAttendanceActivity : BaseActivity() {
     var selectedVisitCheckInId = -1;
     var selectedVisitCheckInTime = "";
 
+
     private fun checkCameraPermission() : Boolean {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
@@ -83,7 +86,48 @@ class AutoAttendanceActivity : BaseActivity() {
         }
     }
 
+    fun showEmployeeDialog(name: String, phone: String, designation: String, employeeId: String) {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_employee_punch)
+        dialog.setCancelable(true)
+        // Set dialog width to 90% of screen width
+        val window = dialog.window
+        val layoutParams = window?.attributes
+        val displayMetrics = resources.displayMetrics
+        layoutParams?.width = (displayMetrics.widthPixels * 0.9).toInt() // 90% of screen width
+        window?.attributes = layoutParams
 
+
+        val tvName = dialog.findViewById<TextView>(R.id.tvName)
+        val tvPhone = dialog.findViewById<TextView>(R.id.tvPhone)
+        val tvDesignation = dialog.findViewById<TextView>(R.id.tvDesignation)
+
+        val btnPunchIn = dialog.findViewById<Button>(R.id.btnPunchIn)
+        val btnPunchOut = dialog.findViewById<Button>(R.id.btnPunchOut)
+        val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
+
+        // Set data
+        tvName.text = "Name: $name"
+        tvPhone.text = "Phone: $phone"
+        tvDesignation.text = "Department: $designation"
+
+        // Handle button clicks
+        btnPunchIn.setOnClickListener {
+            binding.btnClockIn.performClick()
+            dialog.dismiss()
+        }
+
+        btnPunchOut.setOnClickListener {
+            binding.btnClockOut.performClick()
+            dialog.dismiss()
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +137,19 @@ class AutoAttendanceActivity : BaseActivity() {
         homeActivityHelper = AutoAttendanceActivityHelper(this)
         homeActivityHelper.init(thisActivity = this)
 
+        binding.buttonProceed.setOnClickListener {
+//            showEmployeeDialog(
+//                name = "John Doe",
+//                phone = "+1234567890",
+//                designation = "Software Engineer",
+//                employeeId = ""
+//            )
+            if(binding.edEmpId.text.isEmpty()){
+                Toast.makeText(this, "Please enter Employee ID", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            homeActivityHelper.hitApi(KEY_GetEmp)
+        }
 //        val drawerLayout = binding.drawerLayout
 
 //        findViewById<LinearLayout>(R.id.llUser).setOnClickListener {
@@ -175,7 +232,7 @@ class AutoAttendanceActivity : BaseActivity() {
 //                }
 //            }
         }
-
+//
         binding.btnClockOut.setOnClickListener {
             if(binding.edEmpId.text.isEmpty()){
                 Toast.makeText(this, "Please enter Employee ID", Toast.LENGTH_LONG).show()

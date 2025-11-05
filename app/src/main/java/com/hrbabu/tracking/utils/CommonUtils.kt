@@ -8,7 +8,7 @@ import com.hrbabu.tracking.BuildConfig
 class CommonUtils {
     companion object {
 
-        val isAttendanceApp = false
+        val isAttendanceApp = true
 
         fun showLog(tag: String?, message: String) {
             try {

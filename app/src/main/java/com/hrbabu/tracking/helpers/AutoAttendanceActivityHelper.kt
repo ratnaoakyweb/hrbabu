@@ -16,6 +16,7 @@ import com.hrbabu.tracking.HomeActivity
 import com.hrbabu.tracking.apiBase.BaseHelperActivity
 import com.hrbabu.tracking.apiBase.CallbackWrapper
 import com.hrbabu.tracking.request_response.emptoggel.ResponseGetEmployeeActivityToggle
+import com.hrbabu.tracking.request_response.getemp.GetEmpResponse
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.punchinpunchout.PunchinPunchoutResponse
 import com.hrbabu.tracking.utils.AppUpdateState
@@ -40,8 +41,12 @@ class AutoAttendanceActivityHelper(val homeActivity: AutoAttendanceActivity) : B
         const val PunchOut = "3"
         const val CheckIn = "4"
         const val CheckOut = "5"
+        const val KEY_GetEmp ="6"
 //        const val GetToggel = "6"
     }
+
+    var EmployeeId = -1
+
     override fun hitApi(apiKey: String) {
         showProgressDialog()
 
@@ -101,13 +106,70 @@ class AutoAttendanceActivityHelper(val homeActivity: AutoAttendanceActivity) : B
 //                })
 //            )
 //        }else
+
+        if(apiKey == KEY_GetEmp){
+            val apiCall = getApiClientAuth(homeActivity).getEmployeeManually(
+                employeeCode = homeActivity.binding.edEmpId.text.toString()
+            )
+            disposables.add(
+                sendApiRequest(apiCall)!!.subscribeWith(object : CallbackWrapper<GetEmpResponse?>() {
+                    override fun onSuccess(t: GetEmpResponse?) {
+                        hideProgressDialog()
+                        if(t?.rs == 1){
+                            EmployeeId = t.res?.employeeId ?: -1
+                            homeActivity.showEmployeeDialog(
+                                name = t.res?.fullName ?: "",
+                                phone = t.res?.phone ?: "",
+                                designation = t.res?.departmentName ?: "",
+                                employeeId = t.res?.employeeId.toString() ?: ""
+                            )
+                        }else{
+                            Toast.makeText(homeActivity, t?.msgkey ?: "Error", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onError(t: String?) {
+                        hideProgressDialog()
+                        Toast.makeText(homeActivity, t ?: "Error", Toast.LENGTH_SHORT).show()
+//                        showRetryDialog(object : OnRerty {
+//                            override fun onRetry() {
+//                                dismissDialog()
+//                                hitApi(KEY_PunchIn)
+//                            }
+//                        })
+                    }
+
+                    override fun onTimeout() {
+                        hideProgressDialog()
+//                        showRetryDialog(object : OnRerty {
+//                            override fun onRetry() {
+//                                dismissDialog()
+//                                hitApi(KEY_PunchIn)
+//                                // hitPunchInApi(filePath)
+//                            }
+//                        })
+                    }
+
+                    override fun onUnknownError() { hideProgressDialog()
+//                        showRetryDialog(object : OnRerty {
+//                            override fun onRetry() {
+//                                dismissDialog()
+//                                hitApi(KEY_PunchIn)
+//                            }
+//                        })
+                    }
+                    override fun onLogout() { hideProgressDialog() }
+                })
+            )
+        }else
         if(apiKey == KEY_PunchIn){
                 val file = File(homeActivity.filePath)
                 val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val checkInFilePart = MultipartBody.Part.createFormData("CheckInFile", file.name, requestFile)
                 val textPlain = "text/plain".toMediaTypeOrNull()
-                val apiCall = getApiClientAuth(homeActivity).empPunchInOutManually(
-                    EmployeeId = homeActivity.binding.edEmpId.text.toString().toRequestBody(textPlain),
+                val apiCall = getApiClientAuth(homeActivity)
+                    .empPunchInOutManually(
+                    EmployeeId = EmployeeId.toString().toRequestBody(textPlain),
                     CheckInFile = checkInFilePart,
                     CheckOutFile = null,
                     Flag = "I".toRequestBody(textPlain),  // "I" for Punch In, "O" for Punch Out
@@ -190,7 +252,7 @@ class AutoAttendanceActivityHelper(val homeActivity: AutoAttendanceActivity) : B
             val apiCall = getApiClientAuth(homeActivity).empPunchInOutManually(
                 CheckInFile = null,
                 CheckOutFile = checkOutFilePart,
-                EmployeeId = homeActivity.binding.edEmpId.text.toString().toRequestBody(textPlain),
+                EmployeeId = EmployeeId.toString().toRequestBody(textPlain),
                 Flag = "U".toRequestBody(textPlain),  // "I" for Punch In, "O" for Punch Out
                 DeviceType = "Android Attendance App".toRequestBody(textPlain),
                 CheckInLat = "0".toRequestBody(textPlain),

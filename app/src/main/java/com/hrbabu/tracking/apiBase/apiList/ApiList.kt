@@ -15,6 +15,7 @@ import io.reactivex.Observable
 import com.hrbabu.tracking.request_response.getResponse.GetResponse
 import com.hrbabu.tracking.request_response.getclient.GetClientRequest
 import com.hrbabu.tracking.request_response.getclient.GetClientResponse
+import com.hrbabu.tracking.request_response.getemp.GetEmpResponse
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.leavebalance.GetEmpLeaveBalanceResponse
 import com.hrbabu.tracking.request_response.login.LoginRequest
@@ -30,6 +31,7 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiList {
 
@@ -130,5 +132,10 @@ interface ApiList {
 
     @GET("/api/Employee/GetEmployeeDashboard")
     fun getEmployeeLeavesBalance(): Observable<GetEmpLeaveBalanceResponse>
+
+    @GET("/api/Employee/GetEmployeeManually")
+    fun getEmployeeManually(
+        @Query("EmployeeCode") employeeCode: String
+    ): Observable<GetEmpResponse>
 
 }
