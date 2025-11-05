@@ -59,7 +59,10 @@ class AutoAttendanceActivity : BaseActivity() {
         private const val CAMERA_PERMISSION_CODE = 100
     }
 
-    var pendingLocation: Location? = null
+    var pendingLocation: Location? = Location(LocationManager.GPS_PROVIDER).apply {
+        latitude = 0.0
+        longitude = 0.0
+    }
     var filePath = ""
 
     private lateinit var cameraCurrentState : CameraState
