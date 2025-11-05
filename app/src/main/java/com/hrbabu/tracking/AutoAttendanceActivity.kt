@@ -229,7 +229,7 @@ class AutoAttendanceActivity : BaseActivity() {
 //                        openCameraLauncher.launch(Intent(this@AutoAttendanceActivity, CustomCamera::class.java))
 //                    }
 //                    else {
-                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+//                        Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
 //                    }
 //
 //                }
@@ -251,7 +251,7 @@ class AutoAttendanceActivity : BaseActivity() {
 //                        openCameraLauncher.launch(Intent(this@AutoAttendanceActivity, CustomCamera::class.java))
 //                    }
 //                    else {
-            Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
+//            Toast.makeText(this, "Unable to get GPS location", Toast.LENGTH_LONG).show()
 //                    }
 //
 //                }

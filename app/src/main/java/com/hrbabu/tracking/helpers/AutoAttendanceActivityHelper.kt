@@ -173,7 +173,7 @@ class AutoAttendanceActivityHelper(val homeActivity: AutoAttendanceActivity) : B
                     CheckInFile = checkInFilePart,
                     CheckOutFile = null,
                     Flag = "I".toRequestBody(textPlain),  // "I" for Punch In, "O" for Punch Out
-                    DeviceType = "".toRequestBody(textPlain),
+                    DeviceType = "Android Manual".toRequestBody(textPlain),
                     CheckInLat = (homeActivity.pendingLocation?.latitude.toString() ?: "").toRequestBody(textPlain),
                     CheckInLng = (homeActivity.pendingLocation?.longitude.toString() ?: "").toRequestBody(textPlain),
                     CheckInTime = getCurrentUtcTime().toRequestBody(textPlain),
@@ -254,7 +254,7 @@ class AutoAttendanceActivityHelper(val homeActivity: AutoAttendanceActivity) : B
                 CheckOutFile = checkOutFilePart,
                 EmployeeId = EmployeeId.toString().toRequestBody(textPlain),
                 Flag = "U".toRequestBody(textPlain),  // "I" for Punch In, "O" for Punch Out
-                DeviceType = "Android Attendance App".toRequestBody(textPlain),
+                DeviceType = "Android Manual".toRequestBody(textPlain),
                 CheckInLat = "0".toRequestBody(textPlain),
                 CheckOutTime = getCurrentUtcTime().toRequestBody(textPlain),
                 CheckInLng = "".toRequestBody(textPlain),
