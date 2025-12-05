@@ -4,6 +4,8 @@ import com.hrbabu.tracking.request_response.addclient.AddClientRequest
 import com.hrbabu.tracking.request_response.alldropdown.GetAllDropdownResponse
 import com.hrbabu.tracking.request_response.applyLeave.SaveEmpLeaveRequest
 import com.hrbabu.tracking.request_response.applyLeave.SaveEmpLeaveResponse
+import com.hrbabu.tracking.request_response.attendanceHistory.GetAttendanceRequest
+import com.hrbabu.tracking.request_response.attendanceHistory.GetAttendanceResponse
 import com.hrbabu.tracking.request_response.emptoggel.ResponseGetEmployeeActivityToggle
 import com.hrbabu.tracking.request_response.empvisit.EmpVisitRequest
 import com.hrbabu.tracking.request_response.empvisit.EmpVisitResponse
@@ -16,6 +18,8 @@ import com.hrbabu.tracking.request_response.getResponse.GetResponse
 import com.hrbabu.tracking.request_response.getclient.GetClientRequest
 import com.hrbabu.tracking.request_response.getclient.GetClientResponse
 import com.hrbabu.tracking.request_response.getemp.GetEmpResponse
+import com.hrbabu.tracking.request_response.halfday.SaveHalfDayRequest
+import com.hrbabu.tracking.request_response.halfday.SaveHalfDayResponse
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.leavebalance.GetEmpLeaveBalanceResponse
 import com.hrbabu.tracking.request_response.login.LoginRequest
@@ -137,5 +141,12 @@ interface ApiList {
     fun getEmployeeManually(
         @Query("EmployeeCode") employeeCode: String
     ): Observable<GetEmpResponse>
+
+
+    @POST("/api/Employee/GetEmployeeAttendanceNew")
+    fun getEmployeeAttendanceNew(@Body request : GetAttendanceRequest): Observable<GetAttendanceResponse>
+
+    @POST("/api/Employee/SaveHalfDayRequest")
+    fun saveHalfDayRequest(@Body request : SaveHalfDayRequest): Observable<SaveHalfDayResponse>
 
 }

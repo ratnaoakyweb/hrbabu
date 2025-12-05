@@ -79,7 +79,7 @@ class CustomCamera : AppCompatActivity() {
     private fun saveImageToCache(bitmap: Bitmap): String {
         val file = File(cacheDir, "punch_${System.currentTimeMillis()}.jpg")
         FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, out)
         }
         return file.absolutePath
     }

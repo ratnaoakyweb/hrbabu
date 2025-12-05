@@ -1,6 +1,7 @@
 package com.hrbabu.tracking
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,6 +30,7 @@ import java.io.FileOutputStream
 import java.util.*
 import androidx.core.graphics.toColorInt
 import androidx.core.view.GravityCompat
+import com.hrbabu.tracking.activity.ActivityAttendanceHistory
 import com.hrbabu.tracking.activity.ActivityClientList
 import com.hrbabu.tracking.activity.ActivityLeaveList
 import com.hrbabu.tracking.activity.ActivityProfile
@@ -107,6 +109,12 @@ class HomeActivity : BaseActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
 
             startActivity(Intent(this, ActivityLeaveList::class.java))
+        }
+
+        findViewById<LinearLayout>(R.id.layoutAttendance).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            startActivity(Intent(this, ActivityAttendanceHistory::class.java))
         }
         findViewById<LinearLayout>(R.id.layoutClient).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -196,7 +204,8 @@ class HomeActivity : BaseActivity() {
 //            }
         }
         binding.llLocation.visibility= View.VISIBLE
-        getCurrentLocation()
+//        getCurrentLocation()
+        getCurrentLocationFast()
 
 
         //set current date and day
@@ -427,8 +436,119 @@ class HomeActivity : BaseActivity() {
         stopService(intent)
     }
 
+    @SuppressLint("MissingPermission")
+    fun requestContinuousLocationUpdates() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-     fun getCurrentLocation(){
+        // Check if permission is granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            askFormLocationPermission()
+            return
+        }
+
+        // Set up location request with higher priority and faster interval (2 seconds)
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY, 2000 // update every 2 seconds
+        )
+            .setWaitForAccurateLocation(true)     // Force accurate readings
+            .setMinUpdateIntervalMillis(1000)    // minimum 1-second interval
+            .build()
+
+        // Start receiving location updates
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(result: LocationResult) {
+                    // Get the most recent location
+                    val loc = result.lastLocation
+                    if (loc != null) {
+                        // Update your live data or UI with the location
+                        LocationLiveData.updateLocation(loc)
+                        pendingLocation = loc
+
+                        // Optionally hide location progress UI element
+                        binding.llLocation.visibility = View.GONE
+                    }
+                }
+
+                override fun onLocationAvailability(availability: LocationAvailability) {
+                    super.onLocationAvailability(availability)
+                    if (!availability.isLocationAvailable) {
+                        // Handle case where location is not available (e.g., display a message)
+                        binding.llLocation.visibility = View.VISIBLE
+                        binding.tvLocation.text = "Waiting for location..."
+                    }
+                }
+            },
+            Looper.getMainLooper() // Main thread for UI updates
+        )
+    }
+
+    fun getCurrentLocationFast() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Ensure permission is granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            askFormLocationPermission()
+            return
+        }
+
+        // Try to get the most recent location immediately
+        fusedLocationClient.getCurrentLocation(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            null
+        ).addOnSuccessListener { location ->
+            if (location != null) {
+                // Update your live data or UI with the location
+                LocationLiveData.updateLocation(location)
+                pendingLocation = location
+
+                // Optionally hide your location progress UI element
+                binding.llLocation.visibility = View.GONE
+            } else {
+                // Fallback to continuous location updates if getCurrentLocation() is null
+                requestLocationUpdatesFallback()
+            }
+        }.addOnFailureListener {
+            // Handle failure to retrieve location (optional)
+            requestLocationUpdatesFallback()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun requestLocationUpdatesFallback() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Set up location request with higher priority and faster interval (2 seconds)
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY, 2000 // update every 2 seconds
+        )
+            .setWaitForAccurateLocation(true)     // Force accurate readings
+            .setMinUpdateIntervalMillis(1000)    // minimum 1-second interval
+            .build()
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(result: LocationResult) {
+                    fusedLocationClient.removeLocationUpdates(this)
+
+                    // Update with the most recent location
+                    val loc = result.lastLocation
+                    if (loc != null) {
+                        LocationLiveData.updateLocation(loc)
+                        pendingLocation = loc
+                        binding.llLocation.visibility = View.GONE
+                    }
+                }
+            },
+            Looper.getMainLooper()
+        )
+    }
+
+    fun getCurrentLocation(){
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 //
@@ -463,6 +583,7 @@ class HomeActivity : BaseActivity() {
                 object : LocationCallback() {
                     override fun onLocationResult(result: LocationResult) {
 //                        fusedLocationClient.removeLocationUpdates(this)
+
                         binding.llLocation.visibility= View.GONE
 //                        Toast.makeText(this@HomeActivity, "Location captured", Toast.LENGTH_SHORT).show()
                         LocationLiveData.updateLocation(result.lastLocation!!)
@@ -492,7 +613,7 @@ class HomeActivity : BaseActivity() {
         task.addOnFailureListener { e ->
             homeActivityHelper.hideProgressDialog()
             binding.llLocation.visibility= View.VISIBLE
-            binding.tvLocation.text= "Location Not captured"
+            binding.tvLocation.text= e.message
 //            Toast.makeText(this@HomeActivity, "Location Not captured", Toast.LENGTH_SHORT).show()
             if (e is ResolvableApiException) {
                 try {
@@ -578,10 +699,10 @@ class HomeActivity : BaseActivity() {
                     val imagePath = url
                     filePath = imagePath
                     // Reverse geocode
-                    val geocoder = android.location.Geocoder(this, Locale.getDefault())
-                    val addresses =
-                        geocoder.getFromLocation(pendingLocation!!.latitude, pendingLocation!!.longitude, 1)
-                    val address = addresses?.firstOrNull()?.getAddressLine(0) ?: ""
+//                    val geocoder = android.location.Geocoder(this, Locale.getDefault())
+//                    val addresses =
+//                        geocoder.getFromLocation(pendingLocation!!.latitude, pendingLocation!!.longitude, 1)
+//                    val address = addresses?.firstOrNull()?.getAddressLine(0) ?: ""
 
                     // Save to DB
 //                    val punchEvent = PunchEvent(
@@ -792,7 +913,8 @@ class HomeActivity : BaseActivity() {
             1001 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted
-                    getCurrentLocation()
+//                    getCurrentLocation()
+                    getCurrentLocationFast()
                 } else {
                     // Permission denied show dialog
 
@@ -801,7 +923,9 @@ class HomeActivity : BaseActivity() {
                         .setMessage("Location permission is required for this app to function. Please grant the permission in app settings.")
                         .setPositiveButton("OK") { dialog, _ ->
                             dialog.dismiss()
-                            getCurrentLocation()
+//                            getCurrentLocation()
+                            getCurrentLocationFast()
+
                         }
                         .show()
 

@@ -64,6 +64,8 @@
 
         <activity android:name=".AutoAttendanceActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ActivityAttendanceHistory"
+            android:screenOrientation="portrait"/>
         <service
             android:name=".service.LocationService"
             android:enabled="true"

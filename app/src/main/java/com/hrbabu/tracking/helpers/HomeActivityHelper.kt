@@ -1,5 +1,6 @@
 package com.hrbabu.tracking.helpers
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import com.hrbabu.tracking.apiBase.BaseHelperActivity
@@ -8,6 +9,8 @@ import com.hrbabu.tracking.request_response.emptoggel.ResponseGetEmployeeActivit
 import com.hrbabu.tracking.request_response.history.HistoryResponse
 import com.hrbabu.tracking.request_response.punchinpunchout.PunchinPunchoutResponse
 import com.hrbabu.tracking.utils.ButtonState
+import com.hrbabu.tracking.utils.PrefKeys
+import com.hrbabu.tracking.utils.PrefUtil
 import com.hrbabu.tracking.utils.checkAppUpdate
 import com.hrbabu.tracking.utils.getApiClientAuth
 import com.hrbabu.tracking.utils.getCurrentUtcTime
@@ -469,7 +472,16 @@ class HomeActivityHelper(val homeActivity: com.hrbabu.tracking.HomeActivity) : B
 
                     override fun onLogout() {
                         hideProgressDialog()
-//                    Toast.makeText(fragment.requireContext(),"onLogout", Toast.LENGTH_SHORT).show()
+
+                        Toast.makeText(homeActivity,"onLogout", Toast.LENGTH_SHORT).show()
+                        PrefUtil.Init(homeActivity).save(PrefKeys.loginResponse,null)
+                        homeActivity.startActivity(
+                            Intent(
+                                homeActivity,
+                                com.hrbabu.tracking.SplashActivity::class.java
+                            )
+                        )
+                        homeActivity.finish()
                     }
                 })
             )

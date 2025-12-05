@@ -77,7 +77,7 @@
 
         <!-- Send Feedback -->
         <LinearLayout
-            android:id="@+id/layoutFeedback"
+            android:id="@+id/layoutAttendance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Send Feedback"
+                android:text="Attendance"
                 android:textSize="15sp"
                 android:textColor="#000" />
         </LinearLayout>

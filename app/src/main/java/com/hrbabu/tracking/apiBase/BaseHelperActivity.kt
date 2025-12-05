@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.GsonBuilder
 import com.hrbabu.tracking.BuildConfig
@@ -25,7 +26,7 @@ abstract class BaseHelperActivity {
     protected lateinit var thisActivity: AppCompatActivity
     private var loadingView: View? = null
     private lateinit var progress: ViewGroup
-    lateinit var appDialog: AppDialog
+//    lateinit var appDialog: AppDialog
 
     val disposables = CompositeDisposable()
 
@@ -134,18 +135,32 @@ abstract class BaseHelperActivity {
     }
 
     fun showRetryDialog(listener: OnRerty) {
-        try {
-            appDialog= AppDialog()
-            appDialog.internetConnectivityDialog(thisActivity.baseContext, listener)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        AlertDialog.Builder(thisActivity)
+            .setTitle("Connection Error")
+            .setMessage("Something went wrong. Try again?")
+            .setCancelable(false)
+            .setPositiveButton("Retry") { d, _ ->
+                d.dismiss()
+                listener.onRetry()
+            }
+//            .setNegativeButton("Cancel") { d, _ ->
+//                d.dismiss()
+//                listener.onRetry()
+//            }
+            .show()
+//        try {
+//            appDialog= AppDialog()
+//            appDialog.internetConnectivityDialog(thisActivity.baseContext, listener)
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
 
 
     }
     fun dismissDialog() {
-        appDialog.dialogInternet.dismiss()
+//        thisActivity.finish()
+//        appDialog.dialogInternet.dismiss()
     }
 
 }
